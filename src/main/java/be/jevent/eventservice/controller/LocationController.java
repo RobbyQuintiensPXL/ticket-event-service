@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 @RequestMapping(value = "locations")
@@ -28,7 +27,7 @@ public class LocationController {
 
     @PostMapping(value = "/add_location")
     public ResponseEntity<Void> createLocation(@RequestHeader HttpHeaders token,
-                                                 @RequestBody @Valid CreateLocationResource locationResource) {
+                                               @RequestBody @Valid CreateLocationResource locationResource) {
         UserNameFilter filter = new UserNameFilter();
         String user = filter.getUsername(token);
         locationService.createLocation(locationResource, user);
