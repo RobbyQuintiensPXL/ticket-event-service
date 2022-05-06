@@ -2,31 +2,22 @@ package be.jevent.eventservice.service;
 
 import be.jevent.eventservice.createresource.CreateEventResource;
 import be.jevent.eventservice.dto.EventDTO;
-import be.jevent.eventservice.dto.TicketDTO;
 import be.jevent.eventservice.exception.EventException;
-import be.jevent.eventservice.exception.LocationException;
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.model.Location;
 import be.jevent.eventservice.model.TicketOffice;
 import be.jevent.eventservice.repository.EventRepository;
-import be.jevent.eventservice.repository.LocationRepository;
 import be.jevent.eventservice.service.client.TicketFeignClient;
 import org.apache.commons.fileupload.FileUploadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -54,42 +45,42 @@ public class EventService {
         this.ticketOfficeService = ticketOfficeService;
     }
 
-    public List<EventDTO> getAllEvents(){
+    public List<EventDTO> getAllEvents() {
         List<EventDTO> eventDTOList = eventRepository.findAll().stream().map(EventDTO::new).collect(Collectors.toList());
-        if(eventDTOList.isEmpty()){
+        if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
         }
         return eventDTOList;
     }
 
-    public List<EventDTO> getAllEventsFromTicketOffice(String username){
+    public List<EventDTO> getAllEventsFromTicketOffice(String username) {
         List<EventDTO> eventDTOList = eventRepository.findAllByTicketOffice_Email(username).stream().map(EventDTO::new).collect(Collectors.toList());
-        if(eventDTOList.isEmpty()){
+        if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
         }
         return eventDTOList;
     }
 
-    public List<EventDTO> getAllEventsByType(EventType type){
+    public List<EventDTO> getAllEventsByType(EventType type) {
         List<EventDTO> eventDTOList = eventRepository.findAllByEventType(type).stream().map(EventDTO::new).collect(Collectors.toList());
-        if(eventDTOList.isEmpty()){
+        if (eventDTOList.isEmpty()) {
             throw new EventException("No events found for " + type.getType());
         }
         return eventDTOList;
     }
 
-    public List<EventDTO> getAllEventsByTypeAndCity(EventType type, String city){
+    public List<EventDTO> getAllEventsByTypeAndCity(EventType type, String city) {
         List<EventDTO> eventDTOList = eventRepository.findAllByEventType_AndLocation_City(type, city)
                 .stream().map(EventDTO::new).collect(Collectors.toList());
-        if(eventDTOList.isEmpty()){
+        if (eventDTOList.isEmpty()) {
             throw new EventException("No events found for " + type.getType() + " in " + city);
         }
         return eventDTOList;
     }
 
-    public EventDTO getEventById(Long id){
+    public EventDTO getEventById(Long id) {
         Optional<EventDTO> eventDTO = eventRepository.findById(id).map(EventDTO::new);
-        if(eventDTO.isEmpty()){
+        if (eventDTO.isEmpty()) {
             throw new EventException("Event not found");
         }
         eventDTO.get().setTicketsLeft(eventDTO.get().getTicketsLeft() - retrieveTicketsSold(id));
@@ -97,8 +88,8 @@ public class EventService {
     }
 
     public void createEvent(CreateEventResource eventResource,
-                              MultipartFile banner, MultipartFile thumb, String user) throws IOException, FileUploadException {
-        if(EventType.forName(eventResource.getEventType()) == null){
+                            MultipartFile banner, MultipartFile thumb, String user) throws IOException, FileUploadException {
+        if (EventType.forName(eventResource.getEventType()) == null) {
             throw new EventException("Event type " + eventResource.getEventType() + " not found");
         }
 
@@ -126,7 +117,7 @@ public class EventService {
         eventRepository.save(event);
     }
 
-    public String deleteEvent(Long id){
+    public String deleteEvent(Long id) {
         String responseMessage;
 
         eventRepository.deleteById(id);
@@ -134,12 +125,12 @@ public class EventService {
         return "event deleted";
     }
 
-    public void updateEvent(Event event){
+    public void updateEvent(Event event) {
         eventRepository.save(event);
 
     }
 
-    public int retrieveTicketsSold(Long eventId){
+    public int retrieveTicketsSold(Long eventId) {
         return ticketFeignClient.getTicketsSold(eventId);
     }
 
