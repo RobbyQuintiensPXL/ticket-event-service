@@ -16,21 +16,10 @@
     <properties>
         <java.version>11</java.version>
         <docker.image.prefix>jevent</docker.image.prefix>
+        <sonar.organization>robbyquintienspxl</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.login>7b62a8f1fbe59657454b12f65a8bf71a30d88bfe</sonar.login>
     </properties>
-
-<!--    <profiles>
-        <profile>
-            <id>sonar</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <sonar.organization>robbyquintienspxl</sonar.organization>
-                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-                <sonar.login>7b62a8f1fbe59657454b12f65a8bf71a30d88bfe</sonar.login>
-            </properties>
-        </profile>
-    </profiles>-->
 
     <dependencies>
         <dependency>
@@ -149,6 +138,11 @@
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
             <version>0.8.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sonarsource.scanner.maven</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>3.9.1.2184</version>
         </dependency>
     </dependencies>
 
