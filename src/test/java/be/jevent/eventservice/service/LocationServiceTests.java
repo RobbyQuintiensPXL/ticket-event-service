@@ -79,14 +79,13 @@ public class LocationServiceTests {
     @Test
     public void createLocationTest(){
         init();
-        Locale locale = new Locale("en", "US");
         when(locationRepository.save(any(Location.class))).thenReturn(location);
         when(ticketOfficeRepository.findById(ticketOffice.getId())).thenReturn(java.util.Optional.ofNullable(ticketOffice));
         CreateLocationResource locationResource =
                 new CreateLocationResource(location.getBuildingName(), location.getZipCode(),
                         location.getCity(), location.getAddress(), location.getCountry());
 
-        locationService.createLocation(locationResource, locale, ticketOffice.getEmail());
+        locationService.createLocation(locationResource, ticketOffice.getEmail());
     }
 
     @Test

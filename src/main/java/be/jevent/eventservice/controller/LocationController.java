@@ -27,13 +27,12 @@ public class LocationController {
     }
 
     @PostMapping(value = "/add_location")
-    public ResponseEntity<String> createLocation(@RequestHeader HttpHeaders token,
-                                                 @RequestBody @Valid CreateLocationResource locationResource,
-                                                 @RequestHeader(value = "Accept-Language", required = false) Locale locale) {
+    public ResponseEntity<Void> createLocation(@RequestHeader HttpHeaders token,
+                                                 @RequestBody @Valid CreateLocationResource locationResource) {
         UserNameFilter filter = new UserNameFilter();
         String user = filter.getUsername(token);
-
-        return new ResponseEntity<>(locationService.createLocation(locationResource, locale, user), HttpStatus.CREATED);
+        locationService.createLocation(locationResource, user);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 //    @GetMapping(value = "{id}")

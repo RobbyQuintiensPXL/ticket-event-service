@@ -66,13 +66,9 @@ public class LocationService {
         return locationDTOList;
     }
 
-    public String createLocation(CreateLocationResource locationResource, Locale locale, String user){
+    public void createLocation(CreateLocationResource locationResource, String user){
         TicketOffice ticketOffice = ticketOfficeService.getTicketOfficeByUsername(user);
 
-        String responseMessage;
-        responseMessage = String.format(messageSource.getMessage(
-                "location.create.message", null, locale),
-                locationResource.toString());
         Location location = new Location();
         location.setBuildingName(locationResource.getBuildingName());
         location.setZipCode(locationResource.getZipCode());
@@ -82,7 +78,5 @@ public class LocationService {
         location.setTicketOffice(ticketOffice);
 
         locationRepository.save(location);
-
-        return responseMessage;
     }
 }

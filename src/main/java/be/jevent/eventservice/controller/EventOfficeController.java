@@ -27,14 +27,14 @@ public class EventOfficeController {
     }
 
     @PostMapping(value = "/event/post", consumes = {"*/*"})
-    public ResponseEntity<String> createEvent(@RequestHeader HttpHeaders token,
+    public ResponseEntity<Void> createEvent(@RequestHeader HttpHeaders token,
                                               @RequestPart @Valid CreateEventResource eventResource,
-                                              @RequestHeader(value = "Accept-Language", required = false) Locale locale,
                                               @RequestPart(value = "banner") MultipartFile banner,
                                               @RequestPart(value = "thumb") MultipartFile thumb) throws IOException, FileUploadException {
         UserNameFilter filter = new UserNameFilter();
         String user = filter.getUsername(token);
-        return new ResponseEntity<>(eventService.createEvent(eventResource, locale, banner, thumb, user), HttpStatus.CREATED);
+        eventService.createEvent(eventResource, banner, thumb, user);
+        return new ResponseEntity<>( HttpStatus.CREATED);
     }
 
     @GetMapping("/events")

@@ -96,10 +96,8 @@ public class EventService {
         return eventDTO.get();
     }
 
-    public String createEvent(CreateEventResource eventResource, Locale locale,
+    public void createEvent(CreateEventResource eventResource,
                               MultipartFile banner, MultipartFile thumb, String user) throws IOException, FileUploadException {
-        String responseMessage;
-
         if(EventType.forName(eventResource.getEventType()) == null){
             throw new EventException("Event type " + eventResource.getEventType() + " not found");
         }
@@ -126,11 +124,6 @@ public class EventService {
         storageService.save(banner);
 
         eventRepository.save(event);
-
-        responseMessage = String.format(messageSource.getMessage(
-                        "event.create.message", null, locale),
-                eventResource.toString());
-        return responseMessage;
     }
 
     public String deleteEvent(Long id){
