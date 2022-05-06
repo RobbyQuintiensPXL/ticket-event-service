@@ -18,7 +18,7 @@
         <docker.image.prefix>jevent</docker.image.prefix>
     </properties>
 
-    <profiles>
+<!--    <profiles>
         <profile>
             <id>sonar</id>
             <activation>
@@ -30,7 +30,7 @@
                 <sonar.login>7b62a8f1fbe59657454b12f65a8bf71a30d88bfe</sonar.login>
             </properties>
         </profile>
-    </profiles>
+    </profiles>-->
 
     <dependencies>
         <dependency>
@@ -150,12 +150,6 @@
             <artifactId>jacoco-maven-plugin</artifactId>
             <version>0.8.7</version>
         </dependency>
-        <dependency>
-            <groupId>org.sonarsource.scanner.maven</groupId>
-            <artifactId>sonar-maven-plugin</artifactId>
-            <version>3.9.1.2184</version>
-            <type>maven-plugin</type>
-        </dependency>
     </dependencies>
 
     <build>
@@ -170,32 +164,20 @@
                 <version>0.8.7</version>
                 <executions>
                     <execution>
+                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
                     <execution>
                         <id>report</id>
-                        <phase>prepare-package</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
                         <configuration>
-                            <rules>
-                                <rule>
-                                    <limits>
-                                        <limit>
-                                            <minimum>0.0</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
+                            <formats>
+                                <format>XML</format>
+                            </formats>
                         </configuration>
                     </execution>
                 </executions>
