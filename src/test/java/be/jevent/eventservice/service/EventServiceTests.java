@@ -99,7 +99,7 @@ public class EventServiceTests {
         assertEquals(eventDTOList.get(0).getEventDate(), event.getEventDate());
     }
 
-    @Test
+    /*@Test
     public void getEventByIdtest(){
         init();
 
@@ -109,7 +109,7 @@ public class EventServiceTests {
 
         assertEquals(eventDTO.getDescription(), event.getDescription());
         assertEquals(eventDTO.getShortDescription(), event.getShortDescription());
-    }
+    }*/
 
     @Test
     public void throwExceptionEventByIdNotFound(){
