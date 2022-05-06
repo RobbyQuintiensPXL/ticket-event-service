@@ -37,9 +37,6 @@ public class EventOfficeController {
         return new ResponseEntity<>(eventService.createEvent(eventResource, locale, banner, thumb, user), HttpStatus.CREATED);
     }
 
-    /*@GetMapping("/events")*/
-
-
     @GetMapping("/events")
     public ResponseEntity<List<EventDTO>> getAllEvents(@RequestHeader HttpHeaders token) {
         UserNameFilter filter = new UserNameFilter();
