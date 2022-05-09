@@ -28,8 +28,8 @@ public class EventOfficeController {
     @PostMapping(value = "/event/post", consumes = {"*/*"})
     public ResponseEntity<Void> createEvent(@RequestHeader HttpHeaders token,
                                             @RequestPart @Valid CreateEventResource eventResource,
-                                            @RequestPart(value = "banner") MultipartFile banner,
-                                            @RequestPart(value = "thumb") MultipartFile thumb) throws IOException, FileUploadException {
+                                            @RequestPart MultipartFile banner,
+                                            @RequestPart MultipartFile thumb) throws IOException, FileUploadException {
         UserNameFilter filter = new UserNameFilter();
         String user = filter.getUsername(token);
         eventService.createEvent(eventResource, banner, thumb, user);

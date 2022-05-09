@@ -32,13 +32,13 @@ public class CreateEventResource {
     private final LocalTime eventTime;
 
     @NotNull
-    private final int locationId;
+    private final String location;
 
     @NotNull
     private final double price;
 
     @NotNull
-    private final int amountOfTickets;
+    private final int ticketsLeft;
 
     private final String thumbnail;
 
@@ -47,7 +47,7 @@ public class CreateEventResource {
 
     public CreateEventResource(@NotNull String eventName, @NotNull String eventType, @NotNull String shortDescription,
                                @NotNull String description, @NotNull LocalDate eventDate, @NotNull LocalTime eventTime,
-                               @NotNull int locationId, @NotNull double price, @NotNull int amountOfTickets,
+                               @NotNull String location, @NotNull double price, @NotNull int ticketsLeft,
                                String thumbnail, String banner){
         this.eventName = eventName;
         this.eventType = eventType;
@@ -55,9 +55,9 @@ public class CreateEventResource {
         this.description = description;
         this.eventDate = eventDate;
         this.eventTime = eventTime;
-        this.locationId = locationId;
+        this.location = location;
         this.price = price;
-        this.amountOfTickets = amountOfTickets;
+        this.ticketsLeft = ticketsLeft;
         this.thumbnail = thumbnail;
         this.banner = banner;
     }
@@ -86,16 +86,16 @@ public class CreateEventResource {
         return eventTime;
     }
 
-    public int getLocationId() {
-        return locationId;
+    public String getLocation() {
+        return location;
     }
 
     public double getPrice() {
         return price;
     }
 
-    public int getAmountOfTickets() {
-        return amountOfTickets;
+    public int getTicketsLeft() {
+        return ticketsLeft;
     }
 
     public String getThumbnail() {
@@ -113,7 +113,7 @@ public class CreateEventResource {
                 ", eventType='" + eventType + '\'' +
                 ", eventDate=" + eventDate +
                 ", eventTime=" + eventTime +
-                ", location='" + locationId + '\'' +
+                ", location='" + location + '\'' +
                 ", price='" + price + '\'' +
                 '}';
     }

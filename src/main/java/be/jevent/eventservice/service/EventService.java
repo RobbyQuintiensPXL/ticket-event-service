@@ -93,7 +93,7 @@ public class EventService {
             throw new EventException("Event type " + eventResource.getEventType() + " not found");
         }
 
-        Location location = locationService.getLocationById((long) eventResource.getLocationId());
+        Location location = locationService.getLocationById(Long.parseLong(eventResource.getLocation()));
 
         TicketOffice ticketOffice = ticketOfficeService.getTicketOfficeByUsername(user);
 
@@ -105,7 +105,7 @@ public class EventService {
         event.setEventDate(eventResource.getEventDate());
         event.setEventTime(eventResource.getEventTime());
         event.setLocation(location);
-        event.setTicketsLeft(eventResource.getAmountOfTickets());
+        event.setTicketsLeft(eventResource.getTicketsLeft());
         event.setPrice(eventResource.getPrice());
         event.setBanner(banner.getOriginalFilename());
         event.setThumbnail(thumb.getOriginalFilename());
