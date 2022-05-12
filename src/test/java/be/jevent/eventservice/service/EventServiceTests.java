@@ -113,7 +113,7 @@ public class EventServiceTests {
     }
 
     @Test
-    public void createLocationTest() throws IOException, FileUploadException {
+    public void createEventTest() throws IOException, FileUploadException {
         init();
         when(eventRepository.save(any(Event.class))).thenReturn(event);
         when(locationRepository.findById(any())).thenReturn(Optional.ofNullable(location));
