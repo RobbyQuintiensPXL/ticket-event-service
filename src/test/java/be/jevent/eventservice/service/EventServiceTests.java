@@ -1,27 +1,35 @@
 package be.jevent.eventservice.service;
 
+import be.jevent.eventservice.createresource.CreateEventResource;
 import be.jevent.eventservice.dto.EventDTO;
 import be.jevent.eventservice.exception.EventException;
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.model.Location;
 import be.jevent.eventservice.repository.EventRepository;
+import be.jevent.eventservice.repository.LocationRepository;
+import org.apache.commons.fileupload.FileUploadException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -32,14 +40,19 @@ public class EventServiceTests {
     @MockBean
     private EventRepository eventRepository;
 
+    @MockBean
+    private LocationRepository locationRepository;
+
     @Autowired
     private EventService eventService;
 
     private Event event;
+    private Location location;
 
-    public void init(){
+    public void init() {
         event = new Event();
-        Location location = new Location();
+        location = new Location();
+        location.setId(1L);
         location.setBuildingName("Building");
         location.setCity("City");
         event.setEventName("Test");
@@ -57,7 +70,7 @@ public class EventServiceTests {
     }
 
     @Test
-    public void getAllEventsTest(){
+    public void getAllEventsTest() {
         init();
         List<Event> eventList = new LinkedList<>();
         eventList.add(event);
@@ -70,7 +83,7 @@ public class EventServiceTests {
     }
 
     @Test
-    public void getEventsByTypeTest(){
+    public void getEventsByTypeTest() {
         init();
         List<Event> eventList = new LinkedList<>();
         eventList.add(event);
@@ -84,7 +97,7 @@ public class EventServiceTests {
     }
 
     @Test
-    public void getAllEventsByTypeAndCityTest(){
+    public void getAllEventsByTypeAndCityTest() {
         init();
         List<Event> eventList = new LinkedList<>();
         eventList.add(event);
@@ -97,6 +110,28 @@ public class EventServiceTests {
         assertEquals(eventDTOList.get(0).getEventDate(), event.getEventDate());
         assertEquals(eventDTOList.get(0).getPrice(), event.getPrice());
         assertEquals(eventDTOList.get(0).isAccepted(), event.isAccepted());
+    }
+
+    @Test
+    public void createLocationTest() throws IOException, FileUploadException {
+        init();
+        when(eventRepository.save(any(Event.class))).thenReturn(event);
+        when(locationRepository.findById(any())).thenReturn(Optional.ofNullable(location));
+
+        String banner = "banner.jpg";
+        String thumb = "thumb.jpg";
+        MockMultipartFile fileBanner = new MockMultipartFile("banner",banner,
+                "text/plain", "test data".getBytes());
+        MockMultipartFile fileThumb = new MockMultipartFile("thumb",thumb,
+                "text/plain", "test data".getBytes());
+
+        CreateEventResource eventResource =
+                new CreateEventResource(event.getEventName(), event.getEventType().getType(), event.getShortDescription(),
+                        event.getDescription(), event.getEventDate(), event.getEventTime(),
+                        location.getId().toString(), event.getPrice(), event.getTicketsLeft(),
+                        banner, thumb);
+
+        eventService.createEvent(eventResource, fileBanner, fileThumb, anyString());
     }
 
 //    @Test
@@ -112,7 +147,7 @@ public class EventServiceTests {
 //    }
 
     @Test
-    public void getAllEventsFromTicketOfficeTest(){
+    public void getAllEventsFromTicketOfficeTest() {
         init();
         List<Event> eventList = new LinkedList<>();
         eventList.add(event);
@@ -126,7 +161,7 @@ public class EventServiceTests {
     }
 
     @Test
-    public void getAllEventsFromTicketOfficeAndType(){
+    public void getAllEventsFromTicketOfficeAndType() {
         init();
         List<Event> eventList = new LinkedList<>();
         eventList.add(event);
@@ -140,15 +175,33 @@ public class EventServiceTests {
     }
 
     @Test
-    public void throwExceptionEventByIdNotFound(){
+    public void throwExceptionEventByIdNotFound() {
         Long id = 2L;
         Throwable thrown = assertThrows(EventException.class, () -> eventService.getEventById(id));
         assertEquals("Event not found", thrown.getMessage());
     }
 
     @Test
-    public void throwExceptionNoEventsFound(){
+    public void throwExceptionNoEventsFound() {
         Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEvents());
+        assertEquals("No events found", thrown.getMessage());
+    }
+
+    @Test
+    public void throwExceptionNoEventsFoundFromType() {
+        Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEventsByType(any(EventType.class)));
+        assertEquals("No events found", thrown.getMessage());
+    }
+
+    @Test
+    public void throwExceptionNoEventsFoundFromTicketOffice() {
+        Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEventsFromTicketOffice(anyString()));
+        assertEquals("No events found", thrown.getMessage());
+    }
+
+    @Test
+    public void throwExceptionNoEventsFoundFromTicketOfficeAndType() {
+        Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEventsFromTicketOfficeAndType(anyString(), any(EventType.class)));
         assertEquals("No events found", thrown.getMessage());
     }
 

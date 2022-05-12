@@ -15,25 +15,6 @@ public class UserNameFilter {
     public static final String AUTH_TOKEN = "Authorization";
     private static final Logger logger = LoggerFactory.getLogger(UserNameFilter.class);
 
-    public String getUsername(HttpHeaders requestHeaders) {
-        String username = "";
-
-        if (requestHeaders.get(AUTH_TOKEN) != null) {
-            List<String> header = requestHeaders.get(AUTH_TOKEN);
-            assert header != null;
-            // String head = String.valueOf(header.stream().findFirst().isPresent());
-            String head = header.stream().findFirst().get();
-            String authToken = head.replace("Bearer ", "");
-            JSONObject jsonObj = decodeJWT(authToken);
-            try {
-                username = jsonObj.getString("preferred_username");
-            } catch (Exception e) {
-                logger.debug(e.getMessage());
-            }
-        }
-        return username;
-    }
-
     public String getTicketOffice(HttpHeaders requestHeaders) {
         String ticketOffice = "";
 

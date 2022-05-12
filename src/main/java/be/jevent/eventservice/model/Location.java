@@ -25,9 +25,6 @@ public class Location implements Serializable {
 
     private String country;
 
-//    @ManyToOne
-//    private TicketOffice ticketOffice;
-
     private String organisation;
 
     public Location() {
@@ -83,18 +80,11 @@ public class Location implements Serializable {
     }
 
     public String getTicketOffice() {
-        return organisation;
+        return ticketOffice;
     }
 
     public void setTicketOffice(String ticketOffice) {
         this.ticketOffice = ticketOffice;
     }
 
-    //    public TicketOffice getTicketOffice() {
-//        return ticketOffice;
-//    }
-//
-//    public void setTicketOffice(TicketOffice ticketOffice) {
-//        this.ticketOffice = ticketOffice;
-//    }
 }
