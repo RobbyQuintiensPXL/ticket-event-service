@@ -17,18 +17,14 @@ public class UserNameFilter {
 
     public String getUsername(HttpHeaders requestHeaders) {
         String username = "";
-        JSONObject jsonObj = null;
 
         if (requestHeaders.get(AUTH_TOKEN) != null) {
             List<String> header = requestHeaders.get(AUTH_TOKEN);
             assert header != null;
-            if(header.stream().findFirst().isPresent()){
-                String head = header.stream().findFirst().get();
-                String authToken = head.replace("Bearer ", "");
-                 jsonObj = decodeJWT(authToken);
-            }
+            String head = String.valueOf(header.stream().findFirst().isPresent());
+            String authToken = head.replace("Bearer ", "");
+            JSONObject jsonObj = decodeJWT(authToken);
             try {
-                assert jsonObj != null;
                 username = jsonObj.getString("preferred_username");
             } catch (Exception e) {
                 logger.debug(e.getMessage());
