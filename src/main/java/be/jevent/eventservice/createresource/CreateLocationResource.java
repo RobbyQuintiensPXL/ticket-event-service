@@ -1,6 +1,6 @@
 package be.jevent.eventservice.createresource;
 
-import com.sun.istack.NotNull;
+import javax.validation.constraints.NotNull;
 
 public class CreateLocationResource {
 

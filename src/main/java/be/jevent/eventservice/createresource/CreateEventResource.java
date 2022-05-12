@@ -1,13 +1,10 @@
 package be.jevent.eventservice.createresource;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.sun.istack.NotNull;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 
 public class CreateEventResource {
 
@@ -24,11 +21,11 @@ public class CreateEventResource {
     private final String description;
 
     @NotNull
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private final LocalDate eventDate;
 
     @NotNull
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private final LocalTime eventTime;
 
     @NotNull
@@ -48,7 +45,7 @@ public class CreateEventResource {
     public CreateEventResource(@NotNull String eventName, @NotNull String eventType, @NotNull String shortDescription,
                                @NotNull String description, @NotNull LocalDate eventDate, @NotNull LocalTime eventTime,
                                @NotNull String location, @NotNull double price, @NotNull int ticketsLeft,
-                               String thumbnail, String banner){
+                               String thumbnail, String banner) {
         this.eventName = eventName;
         this.eventType = eventType;
         this.shortDescription = shortDescription;

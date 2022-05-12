@@ -17,8 +17,6 @@ import java.util.Locale;
 @RequestMapping(value = "ticketoffices")
 public class TicketOfficeController {
 
-    private final static String EMAIL_CLAIM = "https://example.com/email";
-
     @Autowired
     private TicketOfficeFeignClient ticketOfficeFeignClient;
 

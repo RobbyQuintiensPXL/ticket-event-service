@@ -1,6 +1,7 @@
 package be.jevent.eventservice.createresource;
 
-import com.sun.istack.NotNull;
+
+import javax.validation.constraints.NotNull;
 
 public class CreateTicketOfficeResource {
 
@@ -10,7 +11,7 @@ public class CreateTicketOfficeResource {
     @NotNull
     private final int locationId;
 
-    public CreateTicketOfficeResource(@NotNull String organisation, @NotNull int locationId){
+    public CreateTicketOfficeResource(@NotNull String organisation, @NotNull int locationId) {
         this.organisation = organisation;
         this.locationId = locationId;
     }

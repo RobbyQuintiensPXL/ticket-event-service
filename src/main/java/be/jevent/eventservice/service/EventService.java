@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -123,6 +125,8 @@ public class EventService {
         storageService.save(banner);
 
         eventRepository.save(event);
+        String timeStamp = new SimpleDateFormat().format( new Date() );
+        LOGGER.info("event created: " + event.getEventName() + " on " + timeStamp.toString());
     }
 
     public String deleteEvent(Long id) {
