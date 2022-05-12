@@ -18,15 +18,10 @@ import java.util.stream.Collectors;
 public class LocationService {
 
     private final LocationRepository locationRepository;
-    private final TicketOfficeRepository ticketOfficeRepository;
-    private final MessageSource messageSource;
     private final TicketOfficeService ticketOfficeService;
 
-    public LocationService(LocationRepository locationRepository, TicketOfficeRepository ticketOfficeRepository,
-                           MessageSource messageSource, TicketOfficeService ticketOfficeService) {
+    public LocationService(LocationRepository locationRepository, TicketOfficeService ticketOfficeService) {
         this.locationRepository = locationRepository;
-        this.ticketOfficeRepository = ticketOfficeRepository;
-        this.messageSource = messageSource;
         this.ticketOfficeService = ticketOfficeService;
     }
 

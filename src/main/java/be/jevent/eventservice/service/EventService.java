@@ -26,8 +26,7 @@ import java.util.stream.Collectors;
 @Service
 public class EventService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(EventService.class);
-    private static final String TOPIC = "test";
+    // private static final String TOPIC = "test";
 
     private final TicketFeignClient ticketFeignClient;
     private final EventRepository eventRepository;
@@ -125,13 +124,10 @@ public class EventService {
         storageService.save(banner);
 
         eventRepository.save(event);
-        String timeStamp = new SimpleDateFormat().format( new Date() );
-        LOGGER.info("event created: " + event.getEventName() + " on " + timeStamp.toString());
     }
 
     public String deleteEvent(Long id) {
         eventRepository.deleteById(id);
-
         return "event deleted";
     }
 

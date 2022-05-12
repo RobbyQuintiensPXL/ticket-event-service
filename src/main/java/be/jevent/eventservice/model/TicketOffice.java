@@ -1,12 +1,13 @@
 package be.jevent.eventservice.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table(name = "ticket_offices")
-public class TicketOffice {
+public class TicketOffice implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

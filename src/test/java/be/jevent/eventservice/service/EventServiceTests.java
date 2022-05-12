@@ -55,6 +55,8 @@ public class EventServiceTests {
         event.setEventDate(LocalDate.now());
         event.setEventTime(LocalTime.now());
         event.setTicketsLeft(200);
+        event.setPrice(100);
+        event.setAccepted(true);
         event.setLocation(location);
         event.setTicketOffice(ticketOffice);
     }
@@ -98,6 +100,8 @@ public class EventServiceTests {
 
         assertEquals(eventDTOList.size(), eventList.size());
         assertEquals(eventDTOList.get(0).getEventDate(), event.getEventDate());
+        assertEquals(eventDTOList.get(0).getPrice(), event.getPrice());
+        assertEquals(eventDTOList.get(0).isAccepted(), event.isAccepted());
     }
 
 //    @Test
@@ -145,6 +149,12 @@ public class EventServiceTests {
         Long id = 2L;
         Throwable thrown = assertThrows(EventException.class, () -> eventService.getEventById(id));
         assertEquals("Event not found", thrown.getMessage());
+    }
+
+    @Test
+    public void throwExceptionNoEventsFound(){
+        Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEvents());
+        assertEquals("No events found", thrown.getMessage());
     }
 
 }
