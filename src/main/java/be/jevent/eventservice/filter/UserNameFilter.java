@@ -8,7 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class UserNameFilter {
@@ -18,14 +17,18 @@ public class UserNameFilter {
 
     public String getUsername(HttpHeaders requestHeaders) {
         String username = "";
+        JSONObject jsonObj = null;
 
-        if (!Objects.requireNonNull(requestHeaders.get(AUTH_TOKEN)).isEmpty()) {
+        if (requestHeaders.get(AUTH_TOKEN) != null) {
             List<String> header = requestHeaders.get(AUTH_TOKEN);
             assert header != null;
-            String head = header.stream().findFirst().get();
-            String authToken = head.replace("Bearer ", "");
-            JSONObject jsonObj = decodeJWT(authToken);
+            if(header.stream().findFirst().isPresent()){
+                String head = header.stream().findFirst().get();
+                String authToken = head.replace("Bearer ", "");
+                 jsonObj = decodeJWT(authToken);
+            }
             try {
+                assert jsonObj != null;
                 username = jsonObj.getString("preferred_username");
             } catch (Exception e) {
                 logger.debug(e.getMessage());
