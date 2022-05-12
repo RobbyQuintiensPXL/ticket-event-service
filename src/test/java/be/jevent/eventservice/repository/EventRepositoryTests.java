@@ -3,6 +3,7 @@ package be.jevent.eventservice.repository;
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.model.Location;
+import be.jevent.eventservice.model.TicketOffice;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,17 @@ public class EventRepositoryTests {
     private EventRepository eventRepository;
 
     private Event event;
+    private TicketOffice ticketOffice;
 
     public void persist(){
+        ticketOffice = new TicketOffice();
+        ticketOffice.setEmail("TestOrg");
+        entityManager.persist(ticketOffice);
         event = new Event();
         event.setEventName("EventName");
         event.setEventType(EventType.CONCERT);
         event.setDescription("Description");
+        event.setTicketOffice(ticketOffice);
         event.setEventTime(LocalTime.of(20,10,0));
         entityManager.persist(event);
         entityManager.flush();
@@ -101,5 +107,26 @@ public class EventRepositoryTests {
 
         assertThat(eventList).isNotEmpty();
         assertThat(eventList.get(0).getDescription()).isEqualTo(event.getDescription());
+    }
+
+    @Test
+    public void showAllEventsByTicketOfficeEmailTest(){
+        persist();
+        List<Event> eventList = eventRepository.
+                findAllByTicketOffice_Email(ticketOffice.getEmail());
+
+        assertThat(eventList).isNotEmpty();
+        assertThat(eventList.get(0).getDescription()).isEqualTo(event.getDescription());
+    }
+
+    @Test
+    public void showAllEventsByTicketOfficeEmailAndTypeTest(){
+        persist();
+        List<Event> eventList = eventRepository.
+                findAllByEventTypeAndTicketOffice_Email(EventType.valueOf("concert".toUpperCase()), ticketOffice.getEmail());
+
+        assertThat(eventList).isNotEmpty();
+        assertThat(eventList.get(0).getDescription()).isEqualTo(event.getDescription());
+        assertThat(eventList.get(0).getTicketOffice().getEmail()).isEqualTo(event.getTicketOffice().getEmail());
     }
 }

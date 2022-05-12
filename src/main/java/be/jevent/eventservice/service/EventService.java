@@ -61,6 +61,14 @@ public class EventService {
         return eventDTOList;
     }
 
+    public List<EventDTO> getAllEventsFromTicketOfficeAndType(String username, EventType type){
+        List<EventDTO> eventDTOList = eventRepository.findAllByEventTypeAndTicketOffice_Email(type, username).stream().map(EventDTO::new).collect(Collectors.toList());
+        if (eventDTOList.isEmpty()) {
+            throw new EventException("No events found");
+        }
+        return eventDTOList;
+    }
+
     public List<EventDTO> getAllEventsByType(EventType type) {
         List<EventDTO> eventDTOList = eventRepository.findAllByEventType(type).stream().map(EventDTO::new).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
@@ -118,8 +126,6 @@ public class EventService {
     }
 
     public String deleteEvent(Long id) {
-        String responseMessage;
-
         eventRepository.deleteById(id);
 
         return "event deleted";
@@ -127,7 +133,6 @@ public class EventService {
 
     public void updateEvent(Event event) {
         eventRepository.save(event);
-
     }
 
     public int retrieveTicketsSold(Long eventId) {

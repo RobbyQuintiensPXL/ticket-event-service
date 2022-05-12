@@ -15,13 +15,14 @@ import java.util.List;
 public class UserNameFilter{
 
     private static final Logger logger = LoggerFactory.getLogger(UserNameFilter.class);
-    public static final String AUTH_TOKEN     = "Authorization";
+    public static final String AUTH_TOKEN = "Authorization";
 
     public String getUsername(HttpHeaders requestHeaders){
         String username = "";
 
         if (requestHeaders.get(AUTH_TOKEN) !=null) {
             List<String> header = requestHeaders.get(AUTH_TOKEN);
+            assert header != null;
             String head = header.stream().findFirst().get();
             String authToken = head.replace("Bearer ","");
             JSONObject jsonObj = decodeJWT(authToken);

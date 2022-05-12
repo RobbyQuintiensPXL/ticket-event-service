@@ -3,6 +3,7 @@ package be.jevent.eventservice.controller;
 import be.jevent.eventservice.createresource.CreateEventResource;
 import be.jevent.eventservice.dto.EventDTO;
 import be.jevent.eventservice.filter.UserNameFilter;
+import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.service.EventService;
 import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.http.HttpHeaders;
@@ -30,22 +31,27 @@ public class EventOfficeController {
                                             @RequestPart @Valid CreateEventResource eventResource,
                                             @RequestPart MultipartFile banner,
                                             @RequestPart MultipartFile thumb) throws IOException, FileUploadException {
-        UserNameFilter filter = new UserNameFilter();
-        String user = filter.getUsername(token);
-        eventService.createEvent(eventResource, banner, thumb, user);
+        eventService.createEvent(eventResource, banner, thumb, getUser(token));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/events")
     public ResponseEntity<List<EventDTO>> getAllEvents(@RequestHeader HttpHeaders token) {
-        UserNameFilter filter = new UserNameFilter();
-        String user = filter.getUsername(token);
+        return new ResponseEntity<>(eventService.getAllEventsFromTicketOffice(getUser(token)), HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(eventService.getAllEventsFromTicketOffice(user), HttpStatus.OK);
+    @GetMapping("/search")
+    public ResponseEntity<List<EventDTO>> getEventsByType(@RequestHeader HttpHeaders token, @RequestParam String type){
+        return new ResponseEntity<>(eventService.getAllEventsFromTicketOfficeAndType(getUser(token), EventType.valueOf(type.toUpperCase())), HttpStatus.OK);
     }
 
     @DeleteMapping("/event/{id}")
     public ResponseEntity<String> deleteEvent(@PathVariable("id") Long id) {
         return new ResponseEntity<>(eventService.deleteEvent(id), HttpStatus.OK);
+    }
+
+    private String getUser(HttpHeaders token){
+        UserNameFilter filter = new UserNameFilter();
+        return filter.getUsername(token);
     }
 }
