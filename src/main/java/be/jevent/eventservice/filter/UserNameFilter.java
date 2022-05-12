@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class UserNameFilter {
@@ -18,7 +19,7 @@ public class UserNameFilter {
     public String getUsername(HttpHeaders requestHeaders) {
         String username = "";
 
-        if (requestHeaders.get(AUTH_TOKEN) != null) {
+        if (!Objects.requireNonNull(requestHeaders.get(AUTH_TOKEN)).isEmpty()) {
             List<String> header = requestHeaders.get(AUTH_TOKEN);
             assert header != null;
             String head = header.stream().findFirst().get();
