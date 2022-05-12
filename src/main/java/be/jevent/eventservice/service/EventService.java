@@ -6,19 +6,14 @@ import be.jevent.eventservice.exception.EventException;
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.model.Location;
-import be.jevent.eventservice.model.TicketOffice;
 import be.jevent.eventservice.repository.EventRepository;
 import be.jevent.eventservice.service.client.TicketFeignClient;
 import org.apache.commons.fileupload.FileUploadException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,17 +28,15 @@ public class EventService {
     private final LocationService locationService;
     private final MessageSource messageSource;
     private final FileStorageService storageService;
-    private final TicketOfficeService ticketOfficeService;
 
     public EventService(TicketFeignClient ticketFeignClient, EventRepository eventRepository,
                         LocationService locationService, MessageSource messageSource,
-                        FileStorageService storageService, TicketOfficeService ticketOfficeService) {
+                        FileStorageService storageService) {
         this.ticketFeignClient = ticketFeignClient;
         this.eventRepository = eventRepository;
         this.locationService = locationService;
         this.messageSource = messageSource;
         this.storageService = storageService;
-        this.ticketOfficeService = ticketOfficeService;
     }
 
     public List<EventDTO> getAllEvents() {
@@ -54,16 +47,16 @@ public class EventService {
         return eventDTOList;
     }
 
-    public List<EventDTO> getAllEventsFromTicketOffice(String username) {
-        List<EventDTO> eventDTOList = eventRepository.findAllByTicketOffice_Email(username).stream().map(EventDTO::new).collect(Collectors.toList());
+    public List<EventDTO> getAllEventsFromTicketOffice(String ticketOffice) {
+        List<EventDTO> eventDTOList = eventRepository.findAllByTicketOffice(ticketOffice).stream().map(EventDTO::new).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
         }
         return eventDTOList;
     }
 
-    public List<EventDTO> getAllEventsFromTicketOfficeAndType(String username, EventType type){
-        List<EventDTO> eventDTOList = eventRepository.findAllByEventTypeAndTicketOffice_Email(type, username).stream().map(EventDTO::new).collect(Collectors.toList());
+    public List<EventDTO> getAllEventsFromTicketOfficeAndType(String ticketOffice, EventType type){
+        List<EventDTO> eventDTOList = eventRepository.findAllByEventTypeAndTicketOffice(type, ticketOffice).stream().map(EventDTO::new).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
         }
@@ -97,14 +90,12 @@ public class EventService {
     }
 
     public void createEvent(CreateEventResource eventResource,
-                            MultipartFile banner, MultipartFile thumb, String user) throws IOException, FileUploadException {
+                            MultipartFile banner, MultipartFile thumb, String ticketOffice) throws IOException, FileUploadException {
         if (EventType.forName(eventResource.getEventType()) == null) {
             throw new EventException("Event type " + eventResource.getEventType() + " not found");
         }
 
         Location location = locationService.getLocationById(Long.parseLong(eventResource.getLocation()));
-
-        TicketOffice ticketOffice = ticketOfficeService.getTicketOfficeByUsername(user);
 
         Event event = new Event();
         event.setEventName(eventResource.getEventName());

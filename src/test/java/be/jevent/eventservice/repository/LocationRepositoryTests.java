@@ -1,7 +1,6 @@
 package be.jevent.eventservice.repository;
 
 import be.jevent.eventservice.model.Location;
-import be.jevent.eventservice.model.TicketOffice;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,23 +62,20 @@ public class LocationRepositoryTests {
 
         assertThat(foundLocation).isNotNull();
         assertThat(foundLocation.get().getCountry()).isEqualTo(location.getCountry());
+        assertThat(foundLocation.get().getZipCode()).isEqualTo(location.getZipCode());
+        assertThat(foundLocation.get().getAddress()).isEqualTo(location.getAddress());
     }
 
     @Test
     public void showAllLocationsByTicketOfficeTest(){
         persist();
-        TicketOffice ticketOffice = new TicketOffice();
-        ticketOffice.setOrganisation("Organisation");
-        location.setTicketOffice(ticketOffice);
 
-        entityManager.persist(ticketOffice);
-        entityManager.flush();
-
-
-        List<Location> locationList = locationRepository.findAllByTicketOffice_Id(ticketOffice.getId());
+        List<Location> locationList = locationRepository.findAllByTicketOffice(location.getTicketOffice());
 
         assertThat(locationList).isNotEmpty();
-        assertThat(locationList.get(0).getTicketOffice().getOrganisation()).isEqualTo(ticketOffice.getOrganisation());
+        assertThat(locationList.get(0).getTicketOffice()).isEqualTo(location.getTicketOffice());
+        assertThat(locationList.get(0).getBuildingName()).isEqualTo(location.getBuildingName());
+        assertThat(locationList.get(0).getCity()).isEqualTo(location.getCity());
     }
 
 }

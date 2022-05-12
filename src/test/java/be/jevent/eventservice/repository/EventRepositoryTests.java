@@ -3,7 +3,6 @@ package be.jevent.eventservice.repository;
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.model.Location;
-import be.jevent.eventservice.model.TicketOffice;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -39,17 +37,13 @@ public class EventRepositoryTests {
     private EventRepository eventRepository;
 
     private Event event;
-    private TicketOffice ticketOffice;
 
     public void persist(){
-        ticketOffice = new TicketOffice();
-        ticketOffice.setEmail("TestOrg");
-        entityManager.persist(ticketOffice);
         event = new Event();
         event.setEventName("EventName");
         event.setEventType(EventType.CONCERT);
         event.setDescription("Description");
-        event.setTicketOffice(ticketOffice);
+        event.setTicketOffice("ticketOffice");
         event.setEventTime(LocalTime.of(20,10,0));
         entityManager.persist(event);
         entityManager.flush();
@@ -80,6 +74,7 @@ public class EventRepositoryTests {
         location.setCity("City");
         location.setBuildingName("Building");
         event.setLocation(location);
+        event.setTicketOffice("Organisation");
 
         entityManager.persist(location);
         entityManager.flush();
@@ -113,7 +108,7 @@ public class EventRepositoryTests {
     public void showAllEventsByTicketOfficeEmailTest(){
         persist();
         List<Event> eventList = eventRepository.
-                findAllByTicketOffice_Email(ticketOffice.getEmail());
+                findAllByTicketOffice(event.getTicketOffice());
 
         assertThat(eventList).isNotEmpty();
         assertThat(eventList.get(0).getDescription()).isEqualTo(event.getDescription());
@@ -123,10 +118,9 @@ public class EventRepositoryTests {
     public void showAllEventsByTicketOfficeEmailAndTypeTest(){
         persist();
         List<Event> eventList = eventRepository.
-                findAllByEventTypeAndTicketOffice_Email(EventType.valueOf("concert".toUpperCase()), ticketOffice.getEmail());
+                findAllByEventTypeAndTicketOffice(EventType.valueOf("concert".toUpperCase()), event.getTicketOffice());
 
         assertThat(eventList).isNotEmpty();
         assertThat(eventList.get(0).getDescription()).isEqualTo(event.getDescription());
-        assertThat(eventList.get(0).getTicketOffice().getEmail()).isEqualTo(event.getTicketOffice().getEmail());
     }
 }

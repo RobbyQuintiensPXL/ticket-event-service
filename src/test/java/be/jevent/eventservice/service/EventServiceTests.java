@@ -5,7 +5,6 @@ import be.jevent.eventservice.exception.EventException;
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.model.Location;
-import be.jevent.eventservice.model.TicketOffice;
 import be.jevent.eventservice.repository.EventRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,13 +38,9 @@ public class EventServiceTests {
     private Event event;
 
     public void init(){
-        TicketOffice ticketOffice = new TicketOffice();
-        ticketOffice.setOrganisation("Organisation");
-        ticketOffice.setEmail("org@test.be");
         event = new Event();
         Location location = new Location();
         location.setBuildingName("Building");
-        location.setTicketOffice(ticketOffice);
         location.setCity("City");
         event.setEventName("Test");
         event.setEventType(EventType.CULTURE);
@@ -58,7 +53,7 @@ public class EventServiceTests {
         event.setPrice(100);
         event.setAccepted(true);
         event.setLocation(location);
-        event.setTicketOffice(ticketOffice);
+        event.setTicketOffice("Organisation");
     }
 
     @Test
@@ -122,9 +117,9 @@ public class EventServiceTests {
         List<Event> eventList = new LinkedList<>();
         eventList.add(event);
 
-        when(eventRepository.findAllByTicketOffice_Email(anyString())).thenReturn(eventList);
+        when(eventRepository.findAllByTicketOffice(anyString())).thenReturn(eventList);
 
-        List<EventDTO> eventDTOList = eventService.getAllEventsFromTicketOffice(event.getTicketOffice().getEmail());
+        List<EventDTO> eventDTOList = eventService.getAllEventsFromTicketOffice(event.getTicketOffice());
 
         assertEquals(eventDTOList.size(), eventList.size());
         assertEquals(eventDTOList.get(0).getTicketsLeft(), event.getTicketsLeft());
@@ -136,9 +131,9 @@ public class EventServiceTests {
         List<Event> eventList = new LinkedList<>();
         eventList.add(event);
 
-        when(eventRepository.findAllByEventTypeAndTicketOffice_Email(any(EventType.class), anyString())).thenReturn(eventList);
+        when(eventRepository.findAllByEventTypeAndTicketOffice(any(EventType.class), anyString())).thenReturn(eventList);
 
-        List<EventDTO> eventDTOList = eventService.getAllEventsFromTicketOfficeAndType(event.getTicketOffice().getEmail(), event.getEventType());
+        List<EventDTO> eventDTOList = eventService.getAllEventsFromTicketOfficeAndType(event.getTicketOffice(), event.getEventType());
 
         assertEquals(eventDTOList.size(), eventList.size());
         assertEquals(eventDTOList.get(0).getLocation().getBuildingName(), event.getLocation().getBuildingName());

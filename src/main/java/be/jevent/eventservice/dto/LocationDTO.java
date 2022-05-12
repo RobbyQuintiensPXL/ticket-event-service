@@ -19,7 +19,7 @@ public class LocationDTO {
         this.city = location.getCity();
         this.address = location.getAddress();
         this.country = location.getCountry();
-        this.ticketOffice = location.getTicketOffice().getOrganisation();
+        this.ticketOffice = location.getTicketOffice();
     }
 
     public Long getId() {

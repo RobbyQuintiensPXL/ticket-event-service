@@ -4,10 +4,7 @@ import be.jevent.eventservice.createresource.CreateLocationResource;
 import be.jevent.eventservice.dto.LocationDTO;
 import be.jevent.eventservice.exception.LocationException;
 import be.jevent.eventservice.model.Location;
-import be.jevent.eventservice.model.TicketOffice;
 import be.jevent.eventservice.repository.LocationRepository;
-import be.jevent.eventservice.repository.TicketOfficeRepository;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +15,9 @@ import java.util.stream.Collectors;
 public class LocationService {
 
     private final LocationRepository locationRepository;
-    private final TicketOfficeService ticketOfficeService;
 
-    public LocationService(LocationRepository locationRepository, TicketOfficeService ticketOfficeService) {
+    public LocationService(LocationRepository locationRepository) {
         this.locationRepository = locationRepository;
-        this.ticketOfficeService = ticketOfficeService;
     }
 
     public Location getLocationById(Long id) {
@@ -41,25 +36,15 @@ public class LocationService {
         return locationDTOList;
     }
 
-    public List<LocationDTO> getLocationsByTicketOffice(Long id) {
-        List<LocationDTO> locationDTOList = locationRepository.findAllByTicketOffice_Id(id).stream().map(LocationDTO::new).collect(Collectors.toList());
-        if (locationDTOList.isEmpty()) {
-            throw new LocationException("No locations found for id " + id);
-        }
-        return locationDTOList;
-    }
-
-    public List<LocationDTO> getLocationsByTicketOfficeEmail(String email) {
-        List<LocationDTO> locationDTOList = locationRepository.findAllByTicketOffice_Email(email).stream().map(LocationDTO::new).collect(Collectors.toList());
+    public List<LocationDTO> getLocationsByTicketOffice(String ticketOffice) {
+        List<LocationDTO> locationDTOList = locationRepository.findAllByTicketOffice(ticketOffice).stream().map(LocationDTO::new).collect(Collectors.toList());
         if (locationDTOList.isEmpty()) {
             throw new LocationException("No locations found");
         }
         return locationDTOList;
     }
 
-    public void createLocation(CreateLocationResource locationResource, String user) {
-        TicketOffice ticketOffice = ticketOfficeService.getTicketOfficeByUsername(user);
-
+    public void createLocation(CreateLocationResource locationResource, String ticketOffice) {
         Location location = new Location();
         location.setBuildingName(locationResource.getBuildingName());
         location.setZipCode(locationResource.getZipCode());

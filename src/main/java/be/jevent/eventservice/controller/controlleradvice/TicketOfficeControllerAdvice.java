@@ -1,7 +1,5 @@
 package be.jevent.eventservice.controller.controlleradvice;
 
-import be.jevent.eventservice.controller.TicketOfficeController;
-import be.jevent.eventservice.exception.LocationException;
 import be.jevent.eventservice.exception.TicketOfficeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;

@@ -31,18 +31,18 @@ public class EventOfficeController {
                                             @RequestPart @Valid CreateEventResource eventResource,
                                             @RequestPart MultipartFile banner,
                                             @RequestPart MultipartFile thumb) throws IOException, FileUploadException {
-        eventService.createEvent(eventResource, banner, thumb, getUser(token));
+        eventService.createEvent(eventResource, banner, thumb, getTicketOffice(token));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/events")
     public ResponseEntity<List<EventDTO>> getAllEvents(@RequestHeader HttpHeaders token) {
-        return new ResponseEntity<>(eventService.getAllEventsFromTicketOffice(getUser(token)), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.getAllEventsFromTicketOffice(getTicketOffice(token)), HttpStatus.OK);
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<EventDTO>> getEventsByType(@RequestHeader HttpHeaders token, @RequestParam String type) {
-        return new ResponseEntity<>(eventService.getAllEventsFromTicketOfficeAndType(getUser(token), EventType.valueOf(type.toUpperCase())), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.getAllEventsFromTicketOfficeAndType(getTicketOffice(token), EventType.valueOf(type.toUpperCase())), HttpStatus.OK);
     }
 
     @DeleteMapping("/event/{id}")
@@ -50,8 +50,8 @@ public class EventOfficeController {
         return new ResponseEntity<>(eventService.deleteEvent(id), HttpStatus.OK);
     }
 
-    private String getUser(HttpHeaders token) {
+    private String getTicketOffice(HttpHeaders token) {
         UserNameFilter filter = new UserNameFilter();
-        return filter.getUsername(token);
+        return filter.getTicketOffice(token);
     }
 }

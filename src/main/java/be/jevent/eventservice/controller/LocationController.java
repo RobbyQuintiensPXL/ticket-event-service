@@ -29,16 +29,16 @@ public class LocationController {
     public ResponseEntity<Void> createLocation(@RequestHeader HttpHeaders token,
                                                @RequestBody @Valid CreateLocationResource locationResource) {
         UserNameFilter filter = new UserNameFilter();
-        String user = filter.getUsername(token);
-        locationService.createLocation(locationResource, user);
+        String ticketOffice = filter.getTicketOffice(token);
+        locationService.createLocation(locationResource, ticketOffice);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping(value = "office")
     public ResponseEntity<List<LocationDTO>> getLocationsByTicketOffice(@RequestHeader HttpHeaders token) {
         UserNameFilter filter = new UserNameFilter();
-        String user = filter.getUsername(token);
+        String ticketOffice = filter.getTicketOffice(token);
 
-        return new ResponseEntity<>(locationService.getLocationsByTicketOfficeEmail(user), HttpStatus.OK);
+        return new ResponseEntity<>(locationService.getLocationsByTicketOffice(ticketOffice), HttpStatus.OK);
     }
 }

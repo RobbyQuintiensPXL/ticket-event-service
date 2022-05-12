@@ -21,7 +21,8 @@ public class UserNameFilter {
         if (requestHeaders.get(AUTH_TOKEN) != null) {
             List<String> header = requestHeaders.get(AUTH_TOKEN);
             assert header != null;
-            String head = String.valueOf(header.stream().findFirst().isPresent());
+            // String head = String.valueOf(header.stream().findFirst().isPresent());
+            String head = header.stream().findFirst().get();
             String authToken = head.replace("Bearer ", "");
             JSONObject jsonObj = decodeJWT(authToken);
             try {
@@ -33,12 +34,30 @@ public class UserNameFilter {
         return username;
     }
 
+    public String getTicketOffice(HttpHeaders requestHeaders) {
+        String ticketOffice = "";
+
+        if (requestHeaders.get(AUTH_TOKEN) != null) {
+            List<String> header = requestHeaders.get(AUTH_TOKEN);
+            assert header != null;
+            // String head = String.valueOf(header.stream().findFirst().isPresent());
+            String head = header.stream().findFirst().get();
+            String authToken = head.replace("Bearer ", "");
+            JSONObject jsonObj = decodeJWT(authToken);
+            try {
+                ticketOffice = jsonObj.getString("Organisation");
+            } catch (Exception e) {
+                logger.debug(e.getMessage());
+            }
+        }
+        return ticketOffice;
+    }
+
     private JSONObject decodeJWT(String JWTToken) {
         String[] split_string = JWTToken.split("\\.");
         String base64EncodedBody = split_string[1];
         Base64 base64Url = new Base64(true);
         String body = new String(base64Url.decode(base64EncodedBody));
-        JSONObject jsonObj = new JSONObject(body);
-        return jsonObj;
+        return new JSONObject(body);
     }
 }
