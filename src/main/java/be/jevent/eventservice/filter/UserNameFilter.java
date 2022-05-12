@@ -4,31 +4,31 @@ import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class UserNameFilter{
+public class UserNameFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserNameFilter.class);
     public static final String AUTH_TOKEN = "Authorization";
+    private static final Logger logger = LoggerFactory.getLogger(UserNameFilter.class);
 
-    public String getUsername(HttpHeaders requestHeaders){
+    public String getUsername(HttpHeaders requestHeaders) {
         String username = "";
 
-        if (requestHeaders.get(AUTH_TOKEN) !=null) {
+        if (requestHeaders.get(AUTH_TOKEN) != null) {
             List<String> header = requestHeaders.get(AUTH_TOKEN);
             assert header != null;
             String head = header.stream().findFirst().get();
-            String authToken = head.replace("Bearer ","");
+            String authToken = head.replace("Bearer ", "");
             JSONObject jsonObj = decodeJWT(authToken);
             try {
                 username = jsonObj.getString("preferred_username");
-            }catch(Exception e) {logger.debug(e.getMessage());}
+            } catch (Exception e) {
+                logger.debug(e.getMessage());
+            }
         }
         return username;
     }

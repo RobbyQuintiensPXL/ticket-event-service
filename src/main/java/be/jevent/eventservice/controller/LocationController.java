@@ -3,7 +3,6 @@ package be.jevent.eventservice.controller;
 import be.jevent.eventservice.createresource.CreateLocationResource;
 import be.jevent.eventservice.dto.LocationDTO;
 import be.jevent.eventservice.filter.UserNameFilter;
-import be.jevent.eventservice.model.Location;
 import be.jevent.eventservice.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

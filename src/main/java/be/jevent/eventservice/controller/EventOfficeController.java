@@ -41,7 +41,7 @@ public class EventOfficeController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<EventDTO>> getEventsByType(@RequestHeader HttpHeaders token, @RequestParam String type){
+    public ResponseEntity<List<EventDTO>> getEventsByType(@RequestHeader HttpHeaders token, @RequestParam String type) {
         return new ResponseEntity<>(eventService.getAllEventsFromTicketOfficeAndType(getUser(token), EventType.valueOf(type.toUpperCase())), HttpStatus.OK);
     }
 
@@ -50,7 +50,7 @@ public class EventOfficeController {
         return new ResponseEntity<>(eventService.deleteEvent(id), HttpStatus.OK);
     }
 
-    private String getUser(HttpHeaders token){
+    private String getUser(HttpHeaders token) {
         UserNameFilter filter = new UserNameFilter();
         return filter.getUsername(token);
     }
