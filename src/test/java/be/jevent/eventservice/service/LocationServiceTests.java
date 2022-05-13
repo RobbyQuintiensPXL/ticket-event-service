@@ -18,8 +18,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -37,6 +36,7 @@ public class LocationServiceTests {
 
     public void init(){
         location = new Location();
+        location.setId(1L);
         location.setBuildingName("Building");
         location.setTicketOffice("ticketOffice");
         location.setCountry("Belgium");
@@ -53,6 +53,17 @@ public class LocationServiceTests {
         List<LocationDTO> locationDTOList = locationService.getAllLocations();
 
         assertEquals(locationList.size(), locationDTOList.size());
+    }
+
+    @Test
+    public void getLocationById(){
+        init();
+
+        when(locationRepository.findById(anyLong())).thenReturn(java.util.Optional.ofNullable(this.location));
+
+        Location location = locationService.getLocationById(this.location.getId());
+        assertEquals(location.getCountry(), this.location.getCountry());
+        assertEquals(location.getId(), this.location.getId());
     }
 
     @Test
@@ -82,6 +93,20 @@ public class LocationServiceTests {
     @Test
     public void throwExceptionWhenLocationByTicketOfficeNotFound(){
         Throwable thrown = assertThrows(LocationException.class, () -> locationService.getLocationsByTicketOffice("organisation"));
+
+        assertEquals("No locations found", thrown.getMessage());
+    }
+
+    @Test
+    public void throwExceptionWhenLocationByIDNotFound(){
+        Throwable thrown = assertThrows(LocationException.class, () -> locationService.getLocationById(anyLong()));
+
+        assertEquals("Location not found", thrown.getMessage());
+    }
+
+    @Test
+    public void throwExceptionWhenLocationsNotFound(){
+        Throwable thrown = assertThrows(LocationException.class, () -> locationService.getAllLocations());
 
         assertEquals("No locations found", thrown.getMessage());
     }

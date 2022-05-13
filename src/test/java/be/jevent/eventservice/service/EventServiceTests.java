@@ -71,6 +71,8 @@ public class EventServiceTests {
         event.setAccepted(true);
         event.setLocation(location);
         event.setTicketOffice("Organisation");
+        event.setBanner("banner");
+        event.setThumbnail("thumb");
     }
 
     @Test
@@ -84,6 +86,8 @@ public class EventServiceTests {
         List<EventDTO> eventDTOList = eventService.getAllEvents();
 
         assertEquals(eventDTOList.size(), eventList.size());
+        assertEquals(eventDTOList.get(0).getBanner(), event.getBanner());
+        assertEquals(eventDTOList.get(0).getThumbnail(), event.getThumbnail());
     }
 
     @Test
@@ -98,6 +102,7 @@ public class EventServiceTests {
 
         assertEquals(eventDTOList.size(), eventList.size());
         assertEquals(eventDTOList.get(0).getEventName(), event.getEventName());
+        assertEquals(eventDTOList.get(0).getShortDescription(), event.getShortDescription());
     }
 
     @Test
@@ -165,6 +170,7 @@ public class EventServiceTests {
 
         assertEquals(eventDTOList.size(), eventList.size());
         assertEquals(eventDTOList.get(0).getTicketsLeft(), event.getTicketsLeft());
+        assertEquals(eventDTOList.get(0).getId(), event.getId());
     }
 
     @Test
@@ -179,6 +185,8 @@ public class EventServiceTests {
 
         assertEquals(eventDTOList.size(), eventList.size());
         assertEquals(eventDTOList.get(0).getLocation().getBuildingName(), event.getLocation().getBuildingName());
+        assertEquals(eventDTOList.get(0).getEventTime(), event.getEventTime());
+        assertEquals(eventDTOList.get(0).getDescription(), event.getDescription());
     }
 
     @Test
