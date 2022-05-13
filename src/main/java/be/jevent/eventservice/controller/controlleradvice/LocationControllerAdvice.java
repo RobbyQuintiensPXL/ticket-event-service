@@ -1,6 +1,5 @@
 package be.jevent.eventservice.controller.controlleradvice;
 
-import be.jevent.eventservice.exception.EventException;
 import be.jevent.eventservice.exception.LocationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;

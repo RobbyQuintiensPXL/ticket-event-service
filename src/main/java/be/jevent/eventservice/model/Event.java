@@ -47,14 +47,6 @@ public class Event implements Serializable {
 
     private String ticketOffice;
 
-//    @ManyToOne
-//    @JoinColumn(name = "ticket_office_id")
-//    private TicketOffice ticketOffice;
-
-//    public TicketOffice getTicketOffice() {
-//        return ticketOffice;
-//    }
-
     public Event() {
         //Empty constructor
     }
@@ -170,8 +162,4 @@ public class Event implements Serializable {
     public void setTicketOffice(String ticketOffice) {
         this.ticketOffice = ticketOffice;
     }
-
-    //    public void setTicketOffice(TicketOffice ticketOffice) {
-//        this.ticketOffice = ticketOffice;
-//    }
 }
