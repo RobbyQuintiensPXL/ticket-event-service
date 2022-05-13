@@ -22,7 +22,7 @@ public class UserNameFilter {
             List<String> header = requestHeaders.get(AUTH_TOKEN);
             assert header != null;
             // String head = String.valueOf(header.stream().findFirst().isPresent());
-            String head = header.stream().findFirst().get();
+            String head = header.stream().findFirst().orElse("test");
             String authToken = head.replace("Bearer ", "");
             JSONObject jsonObj = decodeJWT(authToken);
             try {
