@@ -171,6 +171,7 @@ public class EventServiceTests {
         assertEquals(eventDTOList.size(), eventList.size());
         assertEquals(eventDTOList.get(0).getTicketsLeft(), event.getTicketsLeft());
         assertEquals(eventDTOList.get(0).getId(), event.getId());
+        assertEquals(eventDTOList.get(0).getEventType(), event.getEventType().getType());
     }
 
     @Test

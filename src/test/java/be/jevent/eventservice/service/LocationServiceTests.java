@@ -40,6 +40,8 @@ public class LocationServiceTests {
         location.setBuildingName("Building");
         location.setTicketOffice("ticketOffice");
         location.setCountry("Belgium");
+        location.setAddress("testAdres");
+        location.setCity("city");
     }
 
     @Test
@@ -53,6 +55,9 @@ public class LocationServiceTests {
         List<LocationDTO> locationDTOList = locationService.getAllLocations();
 
         assertEquals(locationList.size(), locationDTOList.size());
+        assertEquals(location.getZipCode(), locationDTOList.get(0).getZipCode());
+        assertEquals(location.getCity(), locationDTOList.get(0).getCity());
+        assertEquals(location.getAddress(), locationDTOList.get(0).getAddress());
     }
 
     @Test
@@ -64,6 +69,7 @@ public class LocationServiceTests {
         Location location = locationService.getLocationById(this.location.getId());
         assertEquals(location.getCountry(), this.location.getCountry());
         assertEquals(location.getId(), this.location.getId());
+        assertEquals(location.getTicketOffice(), this.location.getTicketOffice());
     }
 
     @Test
