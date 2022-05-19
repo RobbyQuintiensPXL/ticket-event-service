@@ -51,9 +51,17 @@ public class EventController {
         return new ResponseEntity<>(eventService.getEventById(id), HttpStatus.OK);
     }
 
+//    @GetMapping("/search")
+//    public ResponseEntity<List<EventDTO>> getEventsByType(@RequestParam String type) {
+//        return new ResponseEntity<>(eventService.getAllEventsByType(EventType.valueOf(type.toUpperCase())),
+//                HttpStatus.OK);
+//    }
+
     @GetMapping("/search")
-    public ResponseEntity<List<EventDTO>> getEventsByType(@RequestParam String type) {
-        return new ResponseEntity<>(eventService.getAllEventsByType(EventType.valueOf(type.toUpperCase())), HttpStatus.OK);
+    public ResponseEntity<List<EventDTO>> getEventsByTypeAndCity(@RequestParam String type,
+                                                                 @RequestParam String city){
+        return new ResponseEntity<>(eventService.getAllEventsByTypeAndCity(EventType.valueOf(type.toUpperCase()), city),
+                HttpStatus.OK);
     }
 
 }
