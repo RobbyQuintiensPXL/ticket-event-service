@@ -3,6 +3,7 @@ package be.jevent.eventservice.controller;
 import be.jevent.eventservice.createresource.CreateLocationResource;
 import be.jevent.eventservice.dto.LocationDTO;
 import be.jevent.eventservice.filter.UserNameFilter;
+import be.jevent.eventservice.model.Location;
 import be.jevent.eventservice.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +33,11 @@ public class LocationController {
         String ticketOffice = filter.getTicketOffice(token);
         locationService.createLocation(locationResource, ticketOffice);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping(value = "{id}")
+    public ResponseEntity<Location> getLocationById(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(locationService.getLocationById(id), HttpStatus.OK);
     }
 
     @GetMapping(value = "office")
