@@ -185,6 +185,22 @@ public class EventServiceTests {
     }
 
     @Test
+    public void getAllEventsByLocationCity() {
+        init();
+        List<Event> eventList = new LinkedList<>();
+        eventList.add(event);
+
+        when(eventRepository.findAllByLocation_City(anyString())).thenReturn(eventList);
+
+        List<EventDTO> eventDTOList = eventService.getEventsByCity(event.getLocation().getCity());
+
+        assertEquals(eventDTOList.size(), eventList.size());
+        assertEquals(eventDTOList.get(0).getLocation().getBuildingName(), event.getLocation().getBuildingName());
+        assertEquals(eventDTOList.get(0).getEventTime(), event.getEventTime());
+        assertEquals(eventDTOList.get(0).getDescription(), event.getDescription());
+    }
+
+    @Test
     public void throwExceptionEventByIdNotFound() {
         Long id = 2L;
         Throwable thrown = assertThrows(EventException.class, () -> eventService.getEventById(id));
@@ -207,6 +223,12 @@ public class EventServiceTests {
     public void throwExceptionNoEventsFoundFromTicketOfficeAndType() {
         Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEventsFromTicketOfficeAndType(anyString(), any(EventType.class)));
         assertEquals("No events found", thrown.getMessage());
+    }
+
+    @Test
+    public void throwExceptionNoEventsFoundFromLocationCity() {
+        Throwable thrown = assertThrows(EventException.class, () -> eventService.getEventsByCity("testingLocation"));
+        assertEquals("No events in " + "testingLocation" + " found", thrown.getMessage());
     }
 
 }

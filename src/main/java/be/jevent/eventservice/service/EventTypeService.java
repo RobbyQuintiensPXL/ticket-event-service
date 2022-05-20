@@ -13,7 +13,6 @@ public class EventTypeService {
 
 
     public List<String> getAllEventTypes() {
-        //List<String> eventTypes = eventTypeRepository.findAll().stream().map(Enum::toString).collect(Collectors.toList());
         List<String> eventTypes = Stream.of(EventType.values()).map(EventType::getType).collect(Collectors.toList());
         if (eventTypes.isEmpty()) {
             throw new EventException("No event types found");

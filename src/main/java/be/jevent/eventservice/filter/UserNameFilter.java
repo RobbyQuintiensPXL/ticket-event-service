@@ -21,7 +21,6 @@ public class UserNameFilter {
         if (requestHeaders.get(AUTH_TOKEN) != null) {
             List<String> header = requestHeaders.get(AUTH_TOKEN);
             assert header != null;
-            // String head = String.valueOf(header.stream().findFirst().isPresent());
             String head = header.stream().findFirst().orElse("test");
             String authToken = head.replace("Bearer ", "");
             JSONObject jsonObj = decodeJWT(authToken);
@@ -35,8 +34,8 @@ public class UserNameFilter {
     }
 
     private JSONObject decodeJWT(String JWTToken) {
-        String[] split_string = JWTToken.split("\\.");
-        String base64EncodedBody = split_string[1];
+        String[] splitString = JWTToken.split("\\.");
+        String base64EncodedBody = splitString[1];
         Base64 base64Url = new Base64(true);
         String body = new String(base64Url.decode(base64EncodedBody));
         return new JSONObject(body);

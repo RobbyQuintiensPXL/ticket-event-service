@@ -122,6 +122,17 @@ public class EventControllerTests {
         assertThat(Objects.requireNonNull(responseEntity.getBody()).getEventName()).isEqualTo(eventDTO.getEventName());
     }
 
+    /*@Test
+    public void getEventsByTypeAndCity(){
+        init();
+        when(eventService.getAllEventsByType(any(EventType.class))).thenReturn(eventList.stream().map(EventDTO::new).collect(Collectors.toList()));
+
+        ResponseEntity<List<EventDTO>> responseEntity = eventController.getEventsByTypeAndCity();
+
+        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
+
+    }*/
+
 
 //    MockHttpServletRequest request = new MockHttpServletRequest();
 //    RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));

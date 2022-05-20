@@ -55,7 +55,7 @@ public class EventService {
         return eventDTOList;
     }
 
-    public List<EventDTO> getAllEventsFromTicketOfficeAndType(String ticketOffice, EventType type){
+    public List<EventDTO> getAllEventsFromTicketOfficeAndType(String ticketOffice, EventType type) {
         List<EventDTO> eventDTOList = eventRepository.findAllByEventTypeAndTicketOffice(type, ticketOffice).stream().map(EventDTO::new).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
@@ -75,7 +75,7 @@ public class EventService {
         List<EventDTO> eventDTOList = eventRepository.findAllByEventType_AndLocation_City(type, city)
                 .stream().map(EventDTO::new).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
-            throw new EventException("No events found for " + type.getType() + " in " + city);
+            throw new EventException("No events found with those queries");
         }
         return eventDTOList;
     }
@@ -87,6 +87,14 @@ public class EventService {
         }
         eventDTO.get().setTicketsLeft(eventDTO.get().getTicketsLeft() - retrieveTicketsSold(id));
         return eventDTO.get();
+    }
+
+    public List<EventDTO> getEventsByCity(String city) {
+        List<EventDTO> eventDTOList = eventRepository.findAllByLocation_City(city).stream().map(EventDTO::new).collect(Collectors.toList());
+        if (eventDTOList.isEmpty()) {
+            throw new EventException("No events in " + city + " found");
+        }
+        return eventDTOList;
     }
 
     public void createEvent(CreateEventResource eventResource,

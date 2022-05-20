@@ -123,4 +123,22 @@ public class EventRepositoryTests {
         assertThat(eventList).isNotEmpty();
         assertThat(eventList.get(0).getDescription()).isEqualTo(event.getDescription());
     }
+
+    @Test
+    public void showAllEventsByLocationCityTest(){
+        persist();
+        Location location = new Location();
+        location.setCity("City");
+        location.setBuildingName("Building");
+        event.setLocation(location);
+
+        entityManager.persist(location);
+        entityManager.flush();
+
+        List<Event> eventList = eventRepository.
+                findAllByLocation_City(event.getLocation().getCity());
+
+        assertThat(eventList).isNotEmpty();
+        assertThat(eventList.get(0).getDescription()).isEqualTo(event.getDescription());
+    }
 }
