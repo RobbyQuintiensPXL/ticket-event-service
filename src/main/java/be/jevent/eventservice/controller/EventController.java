@@ -4,6 +4,7 @@ import be.jevent.eventservice.dto.EventDTO;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.service.EventService;
 import be.jevent.eventservice.service.EventTypeService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -42,8 +43,9 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EventDTO>> getAllEvents() {
-        return new ResponseEntity<>(eventService.getAllEvents(), HttpStatus.OK);
+    public ResponseEntity<Page<EventDTO>> getAllEvents(@RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "5") int size) {
+        return new ResponseEntity<>(eventService.getAllEvents(page, size), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -68,5 +70,13 @@ public class EventController {
 
         return new ResponseEntity<>(eventService.getAllEventsByTypeAndCity(EventType.valueOf(type.toUpperCase()), city),
                 HttpStatus.OK);
+    }
+
+    @GetMapping("/searchterm")
+    public ResponseEntity<Page<EventDTO>> getEventsBySearchTerm(@RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "5") int size,
+                                                                @RequestParam(required = false) String search) {
+        return new ResponseEntity<>(eventService.findBySearchTerm(search, page, size), HttpStatus.OK);
+
     }
 }

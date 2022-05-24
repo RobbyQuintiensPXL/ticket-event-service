@@ -5,14 +5,20 @@ import be.jevent.eventservice.exception.EventException;
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.model.Location;
+import be.jevent.eventservice.repository.EventPageRepository;
 import be.jevent.eventservice.repository.EventRepository;
 import be.jevent.eventservice.repository.LocationRepository;
+import com.querydsl.core.types.Predicate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -20,7 +26,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static be.jevent.eventservice.filter.EventPredicates.eventNameOrBuildingNameContainsIgnoreCase;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,6 +42,9 @@ public class EventServiceTests {
 
     @MockBean
     private EventRepository eventRepository;
+
+    @MockBean
+    private EventPageRepository eventPageRepository;
 
     @MockBean
     private LocationRepository locationRepository;
@@ -74,14 +85,17 @@ public class EventServiceTests {
         init();
         List<Event> eventList = new LinkedList<>();
         eventList.add(event);
+        Page<Event> events = new PageImpl<>(eventList);
+        Pageable paging = PageRequest.of(0, 5);
+        when(eventPageRepository.findAll(paging)).thenReturn(events);
 
-        when(eventRepository.findAll()).thenReturn(eventList);
+        Page<EventDTO> eventDTOList = eventService.getAllEvents(paging.getPageNumber(), paging.getPageSize());
 
-        List<EventDTO> eventDTOList = eventService.getAllEvents();
+        List<EventDTO> eventDTOS = eventDTOList.get().collect(Collectors.toList());
 
-        assertEquals(eventDTOList.size(), eventList.size());
-        assertEquals(eventDTOList.get(0).getBanner(), event.getBanner());
-        assertEquals(eventDTOList.get(0).getThumbnail(), event.getThumbnail());
+        assertEquals(eventDTOS.size(), eventList.size());
+        assertEquals(eventDTOS.get(0).getBanner(), event.getBanner());
+        assertEquals(eventDTOS.get(0).getThumbnail(), event.getThumbnail());
     }
 
     @Test
@@ -201,6 +215,27 @@ public class EventServiceTests {
     }
 
     @Test
+    public void getAllEventsBySearchTerm(){
+        init();
+        String search = "Building";
+        List<Event> eventList = new LinkedList<>();
+        eventList.add(event);
+        Page<Event> events = new PageImpl<>(eventList);
+        Predicate searchPred = eventNameOrBuildingNameContainsIgnoreCase(search);
+        Pageable paging = PageRequest.of(0, 5);
+
+        when(eventPageRepository.findAll(searchPred, paging)).thenReturn(events);
+
+        Page<EventDTO> eventDTOList = eventService.findBySearchTerm(search, paging.getPageNumber(), paging.getPageSize());
+
+        List<EventDTO> eventDTOS = eventDTOList.get().collect(Collectors.toList());
+
+        assertEquals(eventDTOS.size(), eventList.size());
+        assertEquals(eventDTOS.get(0).getBanner(), event.getBanner());
+        assertEquals(eventDTOS.get(0).getThumbnail(), event.getThumbnail());
+    }
+
+    @Test
     public void throwExceptionEventByIdNotFound() {
         Long id = 2L;
         Throwable thrown = assertThrows(EventException.class, () -> eventService.getEventById(id));
@@ -209,7 +244,8 @@ public class EventServiceTests {
 
     @Test
     public void throwExceptionNoEventsFound() {
-        Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEvents());
+        Pageable paging = PageRequest.of(0, 5);
+        Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEvents(paging.getPageNumber(), paging.getPageSize()));
         assertEquals("No events found", thrown.getMessage());
     }
 

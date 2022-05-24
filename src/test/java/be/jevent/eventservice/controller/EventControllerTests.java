@@ -14,6 +14,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -48,6 +52,7 @@ public class EventControllerTests {
     private List<Event> eventList;
     private Event event;
     private Event event2;
+    Pageable pageable;
 
     public void init() {
         Location location = new Location();
@@ -95,15 +100,18 @@ public class EventControllerTests {
         eventList = new ArrayList<>();
         eventList.add(event);
         eventList.add(event2);
+
+        pageable = PageRequest.of(0, 5);
     }
 
     @Test
     public void getAllEventsTest()
     {
         init();
-        when(eventService.getAllEvents()).thenReturn(eventList.stream().map(EventDTO::new).collect(Collectors.toList()));
+        Page<EventDTO> events = new PageImpl<>(eventList).map(EventDTO::new);
+        when(eventService.getAllEvents(pageable.getPageNumber(), pageable.getPageSize())).thenReturn(events);
 
-        ResponseEntity<List<EventDTO>> responseEntity = eventController.getAllEvents();
+        ResponseEntity<Page<EventDTO>> responseEntity = eventController.getAllEvents(pageable.getPageNumber(), pageable.getPageSize());
 
         assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
     }
