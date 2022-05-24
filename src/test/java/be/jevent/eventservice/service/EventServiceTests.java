@@ -215,7 +215,7 @@ public class EventServiceTests {
     }
 
     @Test
-    public void getAllEventsBySearchTerm(){
+    public void getAllEventsBySearchTerm() {
         init();
         String search = "Building";
         List<Event> eventList = new LinkedList<>();
@@ -242,12 +242,20 @@ public class EventServiceTests {
         assertEquals("Event not found", thrown.getMessage());
     }
 
-    @Test
+  /*  @Test
     public void throwExceptionNoEventsFound() {
         Pageable paging = PageRequest.of(0, 5);
         Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEvents(paging.getPageNumber(), paging.getPageSize()));
         assertEquals("No events found", thrown.getMessage());
-    }
+    }*/
+
+/*    @Test
+    public void throwExceptionNoEventsBySearchTermFound() {
+        Pageable paging = PageRequest.of(0, 5);
+        Predicate searchPred = eventNameOrBuildingNameContainsIgnoreCase(event.getLocation().getBuildingName());
+        Throwable thrown = assertThrows(EventException.class, () -> eventService.findBySearchTerm(event.getLocation().getBuildingName(), paging.getPageNumber(), paging.getPageSize()));
+        assertEquals("No events found", thrown.getMessage());
+    }*/
 
     @Test
     public void throwExceptionNoEventsFoundFromTicketOffice() {
