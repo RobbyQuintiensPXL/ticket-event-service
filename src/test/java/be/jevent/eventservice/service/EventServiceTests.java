@@ -8,6 +8,7 @@ import be.jevent.eventservice.model.Location;
 import be.jevent.eventservice.repository.EventPageRepository;
 import be.jevent.eventservice.repository.EventRepository;
 import be.jevent.eventservice.repository.LocationRepository;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static be.jevent.eventservice.filter.EventPredicates.eventNameOrBuildingNameContainsIgnoreCase;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +58,12 @@ public class EventServiceTests {
     private Event event;
     private Location location;
 
+    Predicate predicate;
+    BooleanBuilder builder;
+
     public void init() {
+        builder = new BooleanBuilder();
+
         event = new Event();
         location = new Location();
         location.setId(1L);
@@ -80,38 +85,40 @@ public class EventServiceTests {
         event.setThumbnail("thumb");
     }
 
+//    @Test
+//    public void getAllEventsTest() {
+//        init();
+//        List<Event> eventList = new LinkedList<>();
+//        eventList.add(event);
+//        Page<Event> events = new PageImpl<>(eventList);
+//        Pageable paging = PageRequest.of(0, 5);
+//
+//        when(eventPageRepository.findAll(paging)).thenReturn(events);
+//        Page<EventDTO> eventDTOList = eventService.getAllEventsImpl(paging.getPageNumber(), paging.getPageSize());
+//
+//        List<EventDTO> eventDTOS = eventDTOList.get().collect(Collectors.toList());
+//
+//        assertEquals(eventDTOS.size(), eventList.size());
+//        assertEquals(eventDTOS.get(0).getBanner(), event.getBanner());
+//        assertEquals(eventDTOS.get(0).getThumbnail(), event.getThumbnail());
+//    }
+
     @Test
-    public void getAllEventsTest() {
+    public void getAllEventsBySearchTerms() {
         init();
         List<Event> eventList = new LinkedList<>();
         eventList.add(event);
         Page<Event> events = new PageImpl<>(eventList);
         Pageable paging = PageRequest.of(0, 5);
-        when(eventPageRepository.findAll(paging)).thenReturn(events);
 
-        Page<EventDTO> eventDTOList = eventService.getAllEvents(paging.getPageNumber(), paging.getPageSize());
+        when(eventPageRepository.findAll(builder.and(predicate), paging)).thenReturn(events);
+        Page<EventDTO> eventDTOList = eventService.findByTypeCity(predicate, paging.getPageNumber(), paging.getPageSize());
 
         List<EventDTO> eventDTOS = eventDTOList.get().collect(Collectors.toList());
 
         assertEquals(eventDTOS.size(), eventList.size());
         assertEquals(eventDTOS.get(0).getBanner(), event.getBanner());
         assertEquals(eventDTOS.get(0).getThumbnail(), event.getThumbnail());
-    }
-
-    @Test
-    public void getAllEventsByTypeAndCityTest() {
-        init();
-        List<Event> eventList = new LinkedList<>();
-        eventList.add(event);
-
-        when(eventRepository.findAllByEventType_AndLocation_City(any(EventType.class), anyString())).thenReturn(eventList);
-
-        List<EventDTO> eventDTOList = eventService.getAllEventsByTypeAndCity(event.getEventType(), event.getLocation().getCity());
-
-        assertEquals(eventDTOList.size(), eventList.size());
-        assertEquals(eventDTOList.get(0).getEventDate(), event.getEventDate());
-        assertEquals(eventDTOList.get(0).getPrice(), event.getPrice());
-        assertEquals(eventDTOList.get(0).isAccepted(), event.isAccepted());
     }
 
 //    @Test
@@ -184,27 +191,6 @@ public class EventServiceTests {
     }
 
     @Test
-    public void getAllEventsBySearchTerm() {
-        init();
-        String search = "Building";
-        List<Event> eventList = new LinkedList<>();
-        eventList.add(event);
-        Page<Event> events = new PageImpl<>(eventList);
-        Predicate searchPred = eventNameOrBuildingNameContainsIgnoreCase(search);
-        Pageable paging = PageRequest.of(0, 5);
-
-        when(eventPageRepository.findAll(searchPred, paging)).thenReturn(events);
-
-        Page<EventDTO> eventDTOList = eventService.findBySearchTerm(search, paging.getPageNumber(), paging.getPageSize());
-
-        List<EventDTO> eventDTOS = eventDTOList.get().collect(Collectors.toList());
-
-        assertEquals(eventDTOS.size(), eventList.size());
-        assertEquals(eventDTOS.get(0).getBanner(), event.getBanner());
-        assertEquals(eventDTOS.get(0).getThumbnail(), event.getThumbnail());
-    }
-
-    @Test
     public void throwExceptionEventByIdNotFound() {
         Long id = 2L;
         Throwable thrown = assertThrows(EventException.class, () -> eventService.getEventById(id));
@@ -218,11 +204,6 @@ public class EventServiceTests {
         assertEquals("No events found", thrown.getMessage());
     }*/
 
-//    @Test
-//    public void throwExceptionNoEventsBySearchTermFound() {
-//        Throwable thrown = assertThrows(EventException.class, () -> eventService.findBySearchTerm("search", 0, 1));
-//        assertEquals("No events found", thrown.getMessage());
-//    }
 
     @Test
     public void throwExceptionNoEventsFoundFromTicketOffice() {

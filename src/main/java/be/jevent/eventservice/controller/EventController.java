@@ -2,7 +2,6 @@ package be.jevent.eventservice.controller;
 
 import be.jevent.eventservice.dto.EventDTO;
 import be.jevent.eventservice.model.Event;
-import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.service.EventService;
 import be.jevent.eventservice.service.EventTypeService;
 import com.querydsl.core.types.Predicate;
@@ -61,12 +60,5 @@ public class EventController {
                                                                  @RequestParam(defaultValue = "5") int size,
                                                                  @QuerydslPredicate(root = Event.class) Predicate predicate) {
         return new ResponseEntity<>(eventService.findByTypeCity(predicate, page, size), HttpStatus.OK);
-    }
-
-    @GetMapping("/searchterm")
-    public ResponseEntity<Page<EventDTO>> getEventsBySearchTerm(@RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "5") int size,
-                                                                @RequestParam(required = false) String search) {
-        return new ResponseEntity<>(eventService.findBySearchTerm(search, page, size), HttpStatus.OK);
     }
 }

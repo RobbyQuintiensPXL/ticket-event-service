@@ -4,7 +4,6 @@ import be.jevent.eventservice.dto.EventDTO;
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.model.Location;
-import be.jevent.eventservice.repository.EventRepository;
 import be.jevent.eventservice.service.EventService;
 import be.jevent.eventservice.service.EventTypeService;
 import org.junit.Test;
@@ -13,16 +12,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -30,10 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,14 +39,13 @@ public class EventControllerTests {
 
     @Mock
     EventService eventService;
-
     @Mock
     EventTypeService eventTypeService;
+    Pageable pageable;
 
     private List<Event> eventList;
     private Event event;
     private Event event2;
-    Pageable pageable;
 
     public void init() {
         Location location = new Location();
@@ -105,11 +98,10 @@ public class EventControllerTests {
     }
 
     @Test
-    public void getAllEventsTest()
-    {
+    public void getAllEventsTest() {
         init();
         Page<EventDTO> events = new PageImpl<>(eventList).map(EventDTO::new);
-        when(eventService.getAllEvents(pageable.getPageNumber(), pageable.getPageSize())).thenReturn(events);
+        when(eventService.getAllEventsImpl(pageable.getPageNumber(), pageable.getPageSize())).thenReturn(events);
 
         ResponseEntity<Page<EventDTO>> responseEntity = eventController.getAllEvents(pageable.getPageNumber(), pageable.getPageSize());
 
@@ -117,8 +109,7 @@ public class EventControllerTests {
     }
 
     @Test
-    public void getEventById()
-    {
+    public void getEventById() {
         init();
         EventDTO eventDTO = Optional.of(event).stream().map(EventDTO::new).findAny().get();
         when(eventService.getEventById(anyLong())).thenReturn(eventDTO);
@@ -129,17 +120,6 @@ public class EventControllerTests {
         assertThat(Objects.requireNonNull(responseEntity.getBody()).getDescription()).isEqualTo(event.getDescription());
         assertThat(Objects.requireNonNull(responseEntity.getBody()).getEventName()).isEqualTo(eventDTO.getEventName());
     }
-
-    /*@Test
-    public void getEventsByTypeAndCity(){
-        init();
-        when(eventService.getAllEventsByType(any(EventType.class))).thenReturn(eventList.stream().map(EventDTO::new).collect(Collectors.toList()));
-
-        ResponseEntity<List<EventDTO>> responseEntity = eventController.getEventsByTypeAndCity();
-
-        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
-
-    }*/
 
 
 //    MockHttpServletRequest request = new MockHttpServletRequest();

@@ -13,16 +13,8 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    List<Event> findAllByEventName_AndLocation_City(String name, String city);
-
-    List<Event> findAllByEventType(EventType type);
-
-    List<Event> findAllByEventType_AndLocation_City(EventType type, String city);
-
     List<Event> findAllByTicketOffice(String email);
 
     List<Event> findAllByEventTypeAndTicketOffice(EventType type, String email);
-
-    List<Event> findAllByLocation_City(String city);
 
 }
