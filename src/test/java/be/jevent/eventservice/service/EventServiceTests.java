@@ -99,21 +99,6 @@ public class EventServiceTests {
     }
 
     @Test
-    public void getEventsByTypeTest() {
-        init();
-        List<Event> eventList = new LinkedList<>();
-        eventList.add(event);
-
-        when(eventRepository.findAllByEventType(any(EventType.class))).thenReturn(eventList);
-
-        List<EventDTO> eventDTOList = eventService.getAllEventsByType(event.getEventType());
-
-        assertEquals(eventDTOList.size(), eventList.size());
-        assertEquals(eventDTOList.get(0).getEventName(), event.getEventName());
-        assertEquals(eventDTOList.get(0).getShortDescription(), event.getShortDescription());
-    }
-
-    @Test
     public void getAllEventsByTypeAndCityTest() {
         init();
         List<Event> eventList = new LinkedList<>();
@@ -199,22 +184,6 @@ public class EventServiceTests {
     }
 
     @Test
-    public void getAllEventsByLocationCity() {
-        init();
-        List<Event> eventList = new LinkedList<>();
-        eventList.add(event);
-
-        when(eventRepository.findAllByLocation_City(anyString())).thenReturn(eventList);
-
-        List<EventDTO> eventDTOList = eventService.getEventsByCity(event.getLocation().getCity());
-
-        assertEquals(eventDTOList.size(), eventList.size());
-        assertEquals(eventDTOList.get(0).getLocation().getBuildingName(), event.getLocation().getBuildingName());
-        assertEquals(eventDTOList.get(0).getEventTime(), event.getEventTime());
-        assertEquals(eventDTOList.get(0).getDescription(), event.getDescription());
-    }
-
-    @Test
     public void getAllEventsBySearchTerm() {
         init();
         String search = "Building";
@@ -249,13 +218,11 @@ public class EventServiceTests {
         assertEquals("No events found", thrown.getMessage());
     }*/
 
-/*    @Test
-    public void throwExceptionNoEventsBySearchTermFound() {
-        Pageable paging = PageRequest.of(0, 5);
-        Predicate searchPred = eventNameOrBuildingNameContainsIgnoreCase(event.getLocation().getBuildingName());
-        Throwable thrown = assertThrows(EventException.class, () -> eventService.findBySearchTerm(event.getLocation().getBuildingName(), paging.getPageNumber(), paging.getPageSize()));
-        assertEquals("No events found", thrown.getMessage());
-    }*/
+//    @Test
+//    public void throwExceptionNoEventsBySearchTermFound() {
+//        Throwable thrown = assertThrows(EventException.class, () -> eventService.findBySearchTerm("search", 0, 1));
+//        assertEquals("No events found", thrown.getMessage());
+//    }
 
     @Test
     public void throwExceptionNoEventsFoundFromTicketOffice() {
@@ -267,12 +234,6 @@ public class EventServiceTests {
     public void throwExceptionNoEventsFoundFromTicketOfficeAndType() {
         Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEventsFromTicketOfficeAndType(anyString(), any(EventType.class)));
         assertEquals("No events found", thrown.getMessage());
-    }
-
-    @Test
-    public void throwExceptionNoEventsFoundFromLocationCity() {
-        Throwable thrown = assertThrows(EventException.class, () -> eventService.getEventsByCity("testingLocation"));
-        assertEquals("No events in " + "testingLocation" + " found", thrown.getMessage());
     }
 
 }

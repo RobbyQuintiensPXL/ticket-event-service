@@ -10,11 +10,13 @@ import be.jevent.eventservice.model.QEvent;
 import be.jevent.eventservice.repository.EventPageRepository;
 import be.jevent.eventservice.repository.EventRepository;
 import be.jevent.eventservice.service.client.TicketFeignClient;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.Querydsl;
@@ -42,9 +44,6 @@ public class EventService {
     private final MessageSource messageSource;
     private final FileStorageService storageService;
 
-    @PersistenceContext
-    private EntityManager em;
-
     public EventService(TicketFeignClient ticketFeignClient, EventRepository eventRepository,
                         LocationService locationService, MessageSource messageSource,
                         FileStorageService storageService, EventPageRepository eventPageRepository) {
@@ -65,6 +64,13 @@ public class EventService {
         return events;
     }
 
+    public Page<EventDTO> getAllEventsImpl(int page, int size) {
+        Pageable paging = PageRequest.of(page, size);
+        List<EventDTO> list = eventRepository.findAll().stream().map(EventDTO::new).collect(Collectors.toList());
+        PageImpl<EventDTO> pageImpl = new PageImpl<>(list, paging, list.size());
+        return pageImpl;
+    }
+
     public Page<EventDTO> findBySearchTerm(String search, int page, int size){
         Pageable paging = PageRequest.of(page, size);
         Predicate searchPred = eventNameOrBuildingNameContainsIgnoreCase(search);
@@ -73,6 +79,12 @@ public class EventService {
             throw new EventException("No events found");
         }
         return searchResults;
+    }
+
+    public Page<EventDTO> findByTypeCity(Predicate predicate, int page, int size){
+        Pageable paging = PageRequest.of(page, size);
+        BooleanBuilder builder = new BooleanBuilder();
+        return eventPageRepository.findAll(builder.and(predicate), paging).map(EventDTO::new);
     }
 
     public List<EventDTO> getAllEventsFromTicketOffice(String ticketOffice) {
@@ -87,14 +99,6 @@ public class EventService {
         List<EventDTO> eventDTOList = eventRepository.findAllByEventTypeAndTicketOffice(type, ticketOffice).stream().map(EventDTO::new).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
-        }
-        return eventDTOList;
-    }
-
-    public List<EventDTO> getAllEventsByType(EventType type) {
-        List<EventDTO> eventDTOList = eventRepository.findAllByEventType(type).stream().map(EventDTO::new).collect(Collectors.toList());
-        if (eventDTOList.isEmpty()) {
-            throw new EventException("No events found for " + type.getType());
         }
         return eventDTOList;
     }
@@ -115,14 +119,6 @@ public class EventService {
         }
         eventDTO.get().setTicketsLeft(eventDTO.get().getTicketsLeft() - retrieveTicketsSold(id));
         return eventDTO.get();
-    }
-
-    public List<EventDTO> getEventsByCity(String city) {
-        List<EventDTO> eventDTOList = eventRepository.findAllByLocation_City(city).stream().map(EventDTO::new).collect(Collectors.toList());
-        if (eventDTOList.isEmpty()) {
-            throw new EventException("No events in " + city + " found");
-        }
-        return eventDTOList;
     }
 
     public void createEvent(CreateEventResource eventResource,

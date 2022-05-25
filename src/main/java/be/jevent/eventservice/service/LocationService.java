@@ -36,6 +36,14 @@ public class LocationService {
         return locationDTOList;
     }
 
+    public List<String> getAllLocationCities() {
+        List<String> cityList = locationRepository.findAll().stream().map(Location::getCity).distinct().collect(Collectors.toList());
+        if (cityList.isEmpty()) {
+            throw new LocationException("No cities found");
+        }
+        return cityList;
+    }
+
     public List<LocationDTO> getLocationsByTicketOffice(String ticketOffice) {
         List<LocationDTO> locationDTOList = locationRepository.findAllByTicketOffice(ticketOffice).stream().map(LocationDTO::new).collect(Collectors.toList());
         if (locationDTOList.isEmpty()) {

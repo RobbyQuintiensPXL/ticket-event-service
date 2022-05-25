@@ -1,10 +1,13 @@
 package be.jevent.eventservice.controller;
 
 import be.jevent.eventservice.dto.EventDTO;
+import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.service.EventService;
 import be.jevent.eventservice.service.EventTypeService;
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -45,7 +48,7 @@ public class EventController {
     @GetMapping
     public ResponseEntity<Page<EventDTO>> getAllEvents(@RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "5") int size) {
-        return new ResponseEntity<>(eventService.getAllEvents(page, size), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.getAllEventsImpl(page, size), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -53,23 +56,11 @@ public class EventController {
         return new ResponseEntity<>(eventService.getEventById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/type")
-    public ResponseEntity<List<EventDTO>> getEventsByType(@RequestParam String type) {
-        return new ResponseEntity<>(eventService.getAllEventsByType(EventType.valueOf(type.toUpperCase())),
-                HttpStatus.OK);
-    }
-
     @GetMapping("/search")
-    public ResponseEntity<List<EventDTO>> getEventsByTypeAndCity(@RequestParam(required = false) String type,
-                                                                 @RequestParam(required = false) String city) {
-        if (type == null) {
-            return new ResponseEntity<>(eventService.getEventsByCity(city), HttpStatus.OK);
-        } else if (city == null) {
-            return new ResponseEntity<>(eventService.getAllEventsByType(EventType.valueOf(type.toUpperCase())), HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(eventService.getAllEventsByTypeAndCity(EventType.valueOf(type.toUpperCase()), city),
-                HttpStatus.OK);
+    public ResponseEntity<Page<EventDTO>> getEventsByTypeAndCity(@RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "5") int size,
+                                                                 @QuerydslPredicate(root = Event.class) Predicate predicate) {
+        return new ResponseEntity<>(eventService.findByTypeCity(predicate, page, size), HttpStatus.OK);
     }
 
     @GetMapping("/searchterm")
@@ -77,6 +68,5 @@ public class EventController {
                                                                 @RequestParam(defaultValue = "5") int size,
                                                                 @RequestParam(required = false) String search) {
         return new ResponseEntity<>(eventService.findBySearchTerm(search, page, size), HttpStatus.OK);
-
     }
 }

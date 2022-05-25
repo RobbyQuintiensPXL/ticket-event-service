@@ -26,6 +26,11 @@ public class LocationController {
         return new ResponseEntity<>(locationService.getAllLocations(), HttpStatus.OK);
     }
 
+    @GetMapping("/city")
+    public ResponseEntity<List<String>> getAllCities() {
+        return new ResponseEntity<>(locationService.getAllLocationCities(), HttpStatus.OK);
+    }
+
     @PostMapping(value = "/add_location")
     public ResponseEntity<Void> createLocation(@RequestHeader HttpHeaders token,
                                                @RequestBody @Valid CreateLocationResource locationResource) {
