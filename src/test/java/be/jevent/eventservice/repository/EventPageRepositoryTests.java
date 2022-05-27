@@ -97,4 +97,27 @@ public class EventPageRepositoryTests {
         assertThat(eventDTOList.get(0).getEventDate()).isEqualTo(event.getEventDate());
         assertThat(eventDTOList.get(0).getLocation().getBuildingName()).isEqualTo(event.getLocation().getBuildingName());
     }
+    @Test
+    public void showAllEventsByTicketOfficeEmailTest(){
+        persist();
+        Location location = new Location();
+        location.setCity("City");
+        location.setBuildingName("Building");
+        event.setLocation(location);
+        event.setTicketOffice("Organisation");
+        event.setEventName("EventName");
+
+        entityManager.persist(location);
+        entityManager.flush();
+
+        Pageable paging = PageRequest.of(0, 5);
+        BooleanBuilder builder = new BooleanBuilder();
+        Page<EventDTO> eventList = eventPageRepository.findAll(builder.and(predicate), paging).map(EventDTO::new);
+
+        List<EventDTO> eventDTOList = eventList.get().collect(Collectors.toList());
+
+        assertThat(eventList).isNotEmpty();
+        assertThat(eventDTOList.get(0).getDescription()).isEqualTo(event.getDescription());
+        assertThat(eventDTOList.get(0).getLocation().getBuildingName()).isEqualTo(event.getLocation().getBuildingName());
+    }
 }

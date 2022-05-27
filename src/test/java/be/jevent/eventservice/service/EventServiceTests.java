@@ -31,8 +31,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -163,31 +162,17 @@ public class EventServiceTests {
         init();
         List<Event> eventList = new LinkedList<>();
         eventList.add(event);
+        Page<Event> events = new PageImpl<>(eventList);
+        Pageable paging = PageRequest.of(0, 5);
 
-        when(eventRepository.findAllByTicketOffice(anyString())).thenReturn(eventList);
+        when(eventPageRepository.findAll(any(Predicate.class), any(Pageable.class))).thenReturn(events);
+        Page<EventDTO> eventDTOList = eventService.getAllEventsFromTicketOffice(predicate, event.getTicketOffice(), paging.getPageNumber(), paging.getPageSize());
+        List<EventDTO> eventDTOS = eventDTOList.get().collect(Collectors.toList());
 
-        List<EventDTO> eventDTOList = eventService.getAllEventsFromTicketOffice(event.getTicketOffice());
-
-        assertEquals(eventDTOList.size(), eventList.size());
-        assertEquals(eventDTOList.get(0).getTicketsLeft(), event.getTicketsLeft());
-        assertEquals(eventDTOList.get(0).getId(), event.getId());
-        assertEquals(eventDTOList.get(0).getEventType(), event.getEventType().getType());
-    }
-
-    @Test
-    public void getAllEventsFromTicketOfficeAndType() {
-        init();
-        List<Event> eventList = new LinkedList<>();
-        eventList.add(event);
-
-        when(eventRepository.findAllByEventTypeAndTicketOffice(any(EventType.class), anyString())).thenReturn(eventList);
-
-        List<EventDTO> eventDTOList = eventService.getAllEventsFromTicketOfficeAndType(event.getTicketOffice(), event.getEventType());
-
-        assertEquals(eventDTOList.size(), eventList.size());
-        assertEquals(eventDTOList.get(0).getLocation().getBuildingName(), event.getLocation().getBuildingName());
-        assertEquals(eventDTOList.get(0).getEventTime(), event.getEventTime());
-        assertEquals(eventDTOList.get(0).getDescription(), event.getDescription());
+        assertEquals(eventDTOS.size(), eventList.size());
+        assertEquals(eventDTOS.get(0).getTicketsLeft(), event.getTicketsLeft());
+        assertEquals(eventDTOS.get(0).getId(), event.getId());
+        assertEquals(eventDTOS.get(0).getEventType(), event.getEventType().getType());
     }
 
     @Test
@@ -205,16 +190,11 @@ public class EventServiceTests {
     }*/
 
 
-    @Test
+/*    @Test
     public void throwExceptionNoEventsFoundFromTicketOffice() {
-        Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEventsFromTicketOffice(anyString()));
+        Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEventsFromTicketOffice(any(Predicate.class), anyString(), anyInt(), anyInt()));
         assertEquals("No events found", thrown.getMessage());
-    }
+    }*/
 
-    @Test
-    public void throwExceptionNoEventsFoundFromTicketOfficeAndType() {
-        Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEventsFromTicketOfficeAndType(anyString(), any(EventType.class)));
-        assertEquals("No events found", thrown.getMessage());
-    }
 
 }

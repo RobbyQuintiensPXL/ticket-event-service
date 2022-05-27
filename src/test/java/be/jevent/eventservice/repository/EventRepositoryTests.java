@@ -59,15 +59,6 @@ public class EventRepositoryTests {
         entityManager.flush();
     }
 
-    @Test
-    public void showAllEventsByTicketOfficeEmailTest(){
-        persist();
-        List<Event> eventList = eventRepository.
-                findAllByTicketOffice(event.getTicketOffice());
-
-        assertThat(eventList).isNotEmpty();
-        assertThat(eventList.get(0).getDescription()).isEqualTo(event.getDescription());
-    }
 
     @Test
     public void showAllEventsByTicketOfficeEmailAndTypeTest(){

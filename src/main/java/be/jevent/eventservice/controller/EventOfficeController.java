@@ -3,9 +3,13 @@ package be.jevent.eventservice.controller;
 import be.jevent.eventservice.createresource.CreateEventResource;
 import be.jevent.eventservice.dto.EventDTO;
 import be.jevent.eventservice.filter.UserNameFilter;
+import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.service.EventService;
+import com.querydsl.core.types.Predicate;
 import org.apache.commons.fileupload.FileUploadException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,13 +40,11 @@ public class EventOfficeController {
     }
 
     @GetMapping("/events")
-    public ResponseEntity<List<EventDTO>> getAllEvents(@RequestHeader HttpHeaders token) {
-        return new ResponseEntity<>(eventService.getAllEventsFromTicketOffice(getTicketOffice(token)), HttpStatus.OK);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<EventDTO>> getEventsByType(@RequestHeader HttpHeaders token, @RequestParam String type) {
-        return new ResponseEntity<>(eventService.getAllEventsFromTicketOfficeAndType(getTicketOffice(token), EventType.valueOf(type.toUpperCase())), HttpStatus.OK);
+    public ResponseEntity<Page<EventDTO>> getAllEvents(@RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "5") int size,
+                                                       @QuerydslPredicate(root = Event.class) Predicate predicate,
+                                                       @RequestHeader HttpHeaders token) {
+        return new ResponseEntity<>(eventService.getAllEventsFromTicketOffice(predicate, getTicketOffice(token), page, size), HttpStatus.OK);
     }
 
     @DeleteMapping("/event/{id}")
