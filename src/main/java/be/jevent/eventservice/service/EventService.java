@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,8 +122,9 @@ public class EventService {
         eventRepository.save(event);
     }
 
-    public String deleteEvent(Long id) {
-        eventRepository.deleteById(id);
+    @Transactional
+    public String deleteEvent(Long id, String ticketOffice) {
+        eventRepository.deleteByIdAndTicketOffice(id, ticketOffice);
         return "event deleted";
     }
 

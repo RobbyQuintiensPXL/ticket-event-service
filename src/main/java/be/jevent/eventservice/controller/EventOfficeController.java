@@ -48,8 +48,9 @@ public class EventOfficeController {
     }
 
     @DeleteMapping("/event/{id}")
-    public ResponseEntity<String> deleteEvent(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(eventService.deleteEvent(id), HttpStatus.OK);
+    public ResponseEntity<String> deleteEvent(@PathVariable("id") Long id,
+                                              @RequestHeader HttpHeaders token) {
+        return new ResponseEntity<>(eventService.deleteEvent(id, getTicketOffice(token)), HttpStatus.OK);
     }
 
     private String getTicketOffice(HttpHeaders token) {

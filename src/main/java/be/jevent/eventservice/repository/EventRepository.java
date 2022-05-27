@@ -9,10 +9,10 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    List<Event> findAllByEventTypeAndTicketOffice(EventType type, String email);
-
+    Optional<Event> deleteByIdAndTicketOffice(Long id, String email);
 }
