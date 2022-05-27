@@ -13,7 +13,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LocationPageRepository extends PagingAndSortingRepository<Event, Long>,
+public interface LocationPageRepository extends PagingAndSortingRepository<Location, Long>,
         QuerydslPredicateExecutor<Location>,
         QuerydslBinderCustomizer<QLocation> {
 
