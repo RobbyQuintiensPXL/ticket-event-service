@@ -4,7 +4,6 @@ import be.jevent.eventservice.createresource.CreateEventResource;
 import be.jevent.eventservice.dto.EventDTO;
 import be.jevent.eventservice.filter.UserNameFilter;
 import be.jevent.eventservice.model.Event;
-import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.service.EventService;
 import com.querydsl.core.types.Predicate;
 import org.apache.commons.fileupload.FileUploadException;
@@ -18,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "office")

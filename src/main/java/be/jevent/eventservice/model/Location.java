@@ -25,8 +25,6 @@ public class Location implements Serializable {
 
     private String country;
 
-    private String organisation;
-
     public Location() {
         //Empty Contstructor
     }

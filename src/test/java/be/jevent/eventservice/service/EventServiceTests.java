@@ -84,23 +84,23 @@ public class EventServiceTests {
         event.setThumbnail("thumb");
     }
 
-//    @Test
-//    public void getAllEventsTest() {
-//        init();
-//        List<Event> eventList = new LinkedList<>();
-//        eventList.add(event);
-//        Page<Event> events = new PageImpl<>(eventList);
-//        Pageable paging = PageRequest.of(0, 5);
-//
-//        when(eventPageRepository.findAll(paging)).thenReturn(events);
-//        Page<EventDTO> eventDTOList = eventService.getAllEventsImpl(paging.getPageNumber(), paging.getPageSize());
-//
-//        List<EventDTO> eventDTOS = eventDTOList.get().collect(Collectors.toList());
-//
-//        assertEquals(eventDTOS.size(), eventList.size());
-//        assertEquals(eventDTOS.get(0).getBanner(), event.getBanner());
-//        assertEquals(eventDTOS.get(0).getThumbnail(), event.getThumbnail());
-//    }
+    @Test
+    public void getAllEventsTest() {
+        init();
+        List<Event> eventList = new LinkedList<>();
+        eventList.add(event);
+        Page<Event> events = new PageImpl<>(eventList);
+        Pageable paging = PageRequest.of(0, 5);
+
+        when(eventPageRepository.findAll(paging)).thenReturn(events);
+        Page<EventDTO> eventDTOList = eventService.getAllEventsImpl(paging.getPageNumber(), paging.getPageSize());
+
+        List<EventDTO> eventDTOS = eventDTOList.get().collect(Collectors.toList());
+
+        assertEquals(eventDTOS.size(), eventList.size());
+        assertEquals(eventDTOS.get(0).getBanner(), event.getBanner());
+        assertEquals(eventDTOS.get(0).getThumbnail(), event.getThumbnail());
+    }
 
     @Test
     public void getAllEventsBySearchTerms() {

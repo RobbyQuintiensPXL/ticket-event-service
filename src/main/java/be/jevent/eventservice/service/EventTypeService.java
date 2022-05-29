@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 @Service
 public class EventTypeService {
 
-
     public List<String> getAllEventTypes() {
         List<String> eventTypes = Stream.of(EventType.values()).map(EventType::getType).collect(Collectors.toList());
         if (eventTypes.isEmpty()) {

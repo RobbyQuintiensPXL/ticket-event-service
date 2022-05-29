@@ -1,6 +1,5 @@
 package be.jevent.eventservice.repository;
 
-import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.Location;
 import be.jevent.eventservice.model.QLocation;
 import com.querydsl.core.types.dsl.StringExpression;

@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,16 +17,11 @@ import java.util.List;
 @RequestMapping(value = "events")
 public class EventController {
 
-    private static final String TOPIC = "events";
-
-    private final KafkaTemplate<String, EventDTO> kafkaTemplate;
     private final EventService eventService;
     private final EventTypeService eventTypeService;
 
-    public EventController(final KafkaTemplate<String, EventDTO> kafkaTemplate,
-                           final EventService eventService,
+    public EventController(final EventService eventService,
                            final EventTypeService eventTypeService) {
-        this.kafkaTemplate = kafkaTemplate;
         this.eventService = eventService;
         this.eventTypeService = eventTypeService;
     }
@@ -35,13 +29,6 @@ public class EventController {
     @GetMapping("/types")
     public ResponseEntity<List<String>> getAllEventTypes() {
         return new ResponseEntity<>(eventTypeService.getAllEventTypes(), HttpStatus.OK);
-    }
-
-    @GetMapping("/publish/{id}")
-    public String postMessage(@PathVariable("id") Long id) {
-        EventDTO eventDTO = eventService.getEventById(id);
-        kafkaTemplate.send(TOPIC, eventDTO);
-        return "sended Message";
     }
 
     @GetMapping

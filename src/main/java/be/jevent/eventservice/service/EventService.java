@@ -7,29 +7,21 @@ import be.jevent.eventservice.filter.EventPredicates;
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.model.Location;
-import be.jevent.eventservice.model.QEvent;
 import be.jevent.eventservice.repository.EventPageRepository;
 import be.jevent.eventservice.repository.EventRepository;
 import be.jevent.eventservice.service.client.TicketFeignClient;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.fileupload.FileUploadException;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,22 +29,18 @@ import java.util.stream.Collectors;
 @Service
 public class EventService {
 
-    // private static final String TOPIC = "test";
-
     private final TicketFeignClient ticketFeignClient;
     private final EventRepository eventRepository;
     private final EventPageRepository eventPageRepository;
     private final LocationService locationService;
-    private final MessageSource messageSource;
     private final FileStorageService storageService;
 
     public EventService(TicketFeignClient ticketFeignClient, EventRepository eventRepository,
-                        LocationService locationService, MessageSource messageSource,
+                        LocationService locationService,
                         FileStorageService storageService, EventPageRepository eventPageRepository) {
         this.ticketFeignClient = ticketFeignClient;
         this.eventRepository = eventRepository;
         this.locationService = locationService;
-        this.messageSource = messageSource;
         this.storageService = storageService;
         this.eventPageRepository = eventPageRepository;
     }

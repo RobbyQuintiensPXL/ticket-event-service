@@ -15,7 +15,7 @@ import java.util.Objects;
 
 
 @Service
-public class FileStorageService{
+public class FileStorageService {
 
     @Value("${upload-path}")
     private String uploadPath;
@@ -49,5 +49,5 @@ public class FileStorageService{
             throw new RuntimeException("Error: " + e.getMessage());
         }
     }
-    
+
 }
