@@ -21,10 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -109,7 +106,7 @@ public class EventControllerTests {
     }
 
     @Test
-    public void getEventById() {
+    public void getEventByIdTest() {
         init();
         EventDTO eventDTO = Optional.of(event).stream().map(EventDTO::new).findAny().get();
         when(eventService.getEventById(anyLong())).thenReturn(eventDTO);
@@ -119,6 +116,21 @@ public class EventControllerTests {
         assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
         assertThat(Objects.requireNonNull(responseEntity.getBody()).getDescription()).isEqualTo(event.getDescription());
         assertThat(Objects.requireNonNull(responseEntity.getBody()).getEventName()).isEqualTo(eventDTO.getEventName());
+    }
+
+    @Test
+    public void getAllEventTypesTest(){
+        init();
+        List<String> typeList = new LinkedList<>();
+        typeList.add(event.getEventType().getType());
+
+        when(eventTypeService.getAllEventTypes()).thenReturn(typeList);
+
+        ResponseEntity<List<String>> responseEntity = eventController.getAllEventTypes();
+
+        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
+        assertThat(Objects.requireNonNull(responseEntity.getBody()).get(0)).isEqualTo(event.getEventType().getType());
+
     }
 
 

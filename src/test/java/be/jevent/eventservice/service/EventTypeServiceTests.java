@@ -1,7 +1,10 @@
 package be.jevent.eventservice.service;
 
+import be.jevent.eventservice.exception.EventException;
+import be.jevent.eventservice.exception.LocationException;
 import be.jevent.eventservice.model.EventType;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +16,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -37,4 +42,11 @@ public class EventTypeServiceTests {
         assertEquals(eventTypes.get(2), eventTypesFromService.get(2));
         assertEquals(eventTypes.get(3), eventTypesFromService.get(3));
     }
+/*
+    @Test
+    public void throwExceptionWhenNoTypesFound(){
+        Throwable thrown = assertThrows(EventException.class, () -> eventTypeService.getAllEventTypes());
+
+        Assertions.assertEquals("No event types found", thrown.getMessage());
+    }*/
 }

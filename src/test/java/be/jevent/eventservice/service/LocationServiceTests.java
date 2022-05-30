@@ -1,9 +1,12 @@
 package be.jevent.eventservice.service;
 
 import be.jevent.eventservice.createresource.CreateLocationResource;
+import be.jevent.eventservice.dto.EventDTO;
 import be.jevent.eventservice.dto.LocationDTO;
 import be.jevent.eventservice.exception.LocationException;
+import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.Location;
+import be.jevent.eventservice.repository.EventRepository;
 import be.jevent.eventservice.repository.LocationRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,6 +32,9 @@ public class LocationServiceTests {
 
     @MockBean
     private LocationRepository locationRepository;
+
+    @MockBean
+    private EventRepository eventRepository;
 
     @Autowired
     private LocationService locationService;
@@ -58,6 +65,25 @@ public class LocationServiceTests {
         assertEquals(location.getZipCode(), locationDTOList.get(0).getZipCode());
         assertEquals(location.getCity(), locationDTOList.get(0).getCity());
         assertEquals(location.getAddress(), locationDTOList.get(0).getAddress());
+    }
+
+    @Test
+    public void getAllLocationCitiesTest(){
+        init();
+
+        Event event = new Event();
+        event.setLocation(location);
+
+        List<Event> eventList = new LinkedList<>();
+        eventList.add(event);
+
+        when(eventRepository.findAll())
+                .thenReturn(eventList);
+
+        List<String> listOfCities = locationService.getAllLocationCities();
+
+        assertEquals(eventList.size(), listOfCities.size());
+        assertEquals(eventList.get(0).getLocation().getCity(), listOfCities.get(0));
     }
 
     @Test

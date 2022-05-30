@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class LocationControllerTests {
     }
 
     @Test
-    public void getAllLocations() {
+    public void getAllLocationsTest() {
         init();
         when(locationService.getAllLocations()).thenReturn(locationList.stream().map(LocationDTO::new).collect(Collectors.toList()));
 
@@ -63,7 +64,7 @@ public class LocationControllerTests {
     }
 
     @Test
-    public void getLocationById() {
+    public void getLocationByIdTest() {
         init();
         when(locationService.getLocationById(anyLong())).thenReturn(location);
 
@@ -74,5 +75,17 @@ public class LocationControllerTests {
         assertThat(Objects.requireNonNull(responseEntity.getBody()).getCity()).isEqualTo(location.getCity());
     }
 
+    @Test
+    public void getAllCitiesTest(){
+        init();
+        List<String> cityList = new LinkedList<>();
+        cityList.add(location.getCity());
 
+        when(locationService.getAllLocationCities()).thenReturn(cityList);
+
+        ResponseEntity<List<String>> responseEntity = locationController.getAllCities();
+
+        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
+        assertThat(Objects.requireNonNull(responseEntity.getBody()).get(0)).isEqualTo(location.getCity());
+    }
 }

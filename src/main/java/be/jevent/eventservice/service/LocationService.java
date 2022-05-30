@@ -3,7 +3,9 @@ package be.jevent.eventservice.service;
 import be.jevent.eventservice.createresource.CreateLocationResource;
 import be.jevent.eventservice.dto.LocationDTO;
 import be.jevent.eventservice.exception.LocationException;
+import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.Location;
+import be.jevent.eventservice.repository.EventRepository;
 import be.jevent.eventservice.repository.LocationRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +17,12 @@ import java.util.stream.Collectors;
 public class LocationService {
 
     private final LocationRepository locationRepository;
+    private final EventRepository eventRepository;
 
-    public LocationService(LocationRepository locationRepository) {
+    public LocationService(LocationRepository locationRepository,
+                           EventRepository eventRepository) {
         this.locationRepository = locationRepository;
+        this.eventRepository = eventRepository;
     }
 
     public Location getLocationById(Long id) {
@@ -37,7 +42,7 @@ public class LocationService {
     }
 
     public List<String> getAllLocationCities() {
-        List<String> cityList = locationRepository.findAll().stream().map(Location::getCity).distinct().collect(Collectors.toList());
+        List<String> cityList = eventRepository.findAll().stream().map(Event::getLocation).map(Location::getCity).distinct().collect(Collectors.toList());
         if (cityList.isEmpty()) {
             throw new LocationException("No cities found");
         }
