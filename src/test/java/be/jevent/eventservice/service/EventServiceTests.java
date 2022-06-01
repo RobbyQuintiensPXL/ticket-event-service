@@ -31,34 +31,29 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
 public class EventServiceTests {
 
-    @MockBean
-    private EventRepository eventRepository;
-
-    @MockBean
-    private EventPageRepository eventPageRepository;
-
-    @MockBean
-    private LocationRepository locationRepository;
-
-    @Mock
-    private FileStorageService fileStorageService;
-
-    @Autowired
-    private EventService eventService;
-
-    private Event event;
-    private Location location;
-
     Predicate predicate;
     BooleanBuilder builder;
+    @MockBean
+    private EventRepository eventRepository;
+    @MockBean
+    private EventPageRepository eventPageRepository;
+    @MockBean
+    private LocationRepository locationRepository;
+    @Mock
+    private FileStorageService fileStorageService;
+    @Autowired
+    private EventService eventService;
+    private Event event;
+    private Location location;
 
     public void init() {
         builder = new BooleanBuilder();
@@ -84,24 +79,6 @@ public class EventServiceTests {
         event.setThumbnail("thumb");
     }
 
-//    @Test
-//    public void getAllEventsTest() {
-//        init();
-//        List<Event> eventList = new LinkedList<>();
-//        eventList.add(event);
-//        Page<Event> events = new PageImpl<>(eventList);
-//        Pageable paging = PageRequest.of(0, 5);
-//
-//        when(eventPageRepository.findAll(paging)).thenReturn(events);
-//        Page<EventDTO> eventDTOList = eventService.getAllEventsImpl(paging.getPageNumber(), paging.getPageSize());
-//
-//        List<EventDTO> eventDTOS = eventDTOList.get().collect(Collectors.toList());
-//
-//        assertEquals(eventDTOS.size(), eventList.size());
-//        assertEquals(eventDTOS.get(0).getBanner(), event.getBanner());
-//        assertEquals(eventDTOS.get(0).getThumbnail(), event.getThumbnail());
-//    }
-
     @Test
     public void getAllEventsBySearchTerms() {
         init();
@@ -118,6 +95,19 @@ public class EventServiceTests {
         assertEquals(eventDTOS.size(), eventList.size());
         assertEquals(eventDTOS.get(0).getBanner(), event.getBanner());
         assertEquals(eventDTOS.get(0).getThumbnail(), event.getThumbnail());
+    }
+
+    @Test
+    public void getAllEventsImplTest(){
+        init();
+        List<Event> eventList = new LinkedList<>();
+        eventList.add(event);
+        when(eventRepository.findAll()).thenReturn(eventList);
+        Page<EventDTO> events = new PageImpl<>(eventList.stream().map(EventDTO::new).collect(Collectors.toList()));
+        List<EventDTO> eventDTOS = events.get().collect(Collectors.toList());
+
+        assertEquals(eventDTOS.get(0).getDescription(), eventList.get(0).getDescription());
+        assertEquals(eventDTOS.get(0).getEventName(), eventList.get(0).getEventName());
     }
 
 //    @Test
@@ -145,17 +135,20 @@ public class EventServiceTests {
 //        eventService.createEvent(eventResource, fileBanner, fileThumb, anyString());
 //    }
 
-//    @Test
-//    public void getEventByIdtest(){
-//        init();
-//
-//        when(eventRepository.findById(anyLong())).thenReturn(java.util.Optional.ofNullable(event));
-//
-//        EventDTO eventDTO = eventService.getEventById(event.getId());
-//
-//        assertEquals(eventDTO.getDescription(), event.getDescription());
-//        assertEquals(eventDTO.getShortDescription(), event.getShortDescription());
-//    }
+/*    @Test
+    public void getEventByIdtest() {
+        Event newEvent = mock(Event.class);
+        EventType eventType = EventType.CONCERT;
+        EventType mock = mock(EventType.class);
+        newEvent.setEventType(eventType);
+        when(mock.getType()).thenReturn(eventType.getType());
+        when(eventRepository.findById(newEvent.getId())).thenReturn(java.util.Optional.of(newEvent));
+
+        EventDTO eventDTO = eventService.getEventById(newEvent.getId());
+
+        assertEquals(eventDTO.getDescription(), newEvent.getDescription());
+        assertEquals(eventDTO.getShortDescription(), newEvent.getShortDescription());
+    }*/
 
     @Test
     public void getAllEventsFromTicketOfficeTest() {
@@ -175,26 +168,26 @@ public class EventServiceTests {
         assertEquals(eventDTOS.get(0).getEventType(), event.getEventType().getType());
     }
 
-    @Test
+    @Test(expected = EventException.class)
     public void throwExceptionEventByIdNotFound() {
-        Long id = 2L;
-        Throwable thrown = assertThrows(EventException.class, () -> eventService.getEventById(id));
-        assertEquals("Event not found", thrown.getMessage());
+        eventService.getEventById(anyLong());
     }
 
-  /*  @Test
+
+    @Test(expected = EventException.class)
     public void throwExceptionNoEventsFound() {
-        Pageable paging = PageRequest.of(0, 5);
-        Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEvents(paging.getPageNumber(), paging.getPageSize()));
-        assertEquals("No events found", thrown.getMessage());
-    }*/
+        eventService.getAllEventsImpl(1, 1);
+    }
 
+    @Test
+    public void throwExceptionNoEventsByTypeCityFound() {
+        eventService = mock(EventService.class);
+        when(eventService.findByTypeCity(any(Predicate.class), anyInt(), anyInt())).thenReturn(null);
+    }
 
-/*    @Test
-    public void throwExceptionNoEventsFoundFromTicketOffice() {
-        Throwable thrown = assertThrows(EventException.class, () -> eventService.getAllEventsFromTicketOffice(any(Predicate.class), anyString(), anyInt(), anyInt()));
-        assertEquals("No events found", thrown.getMessage());
-    }*/
-
-
+    @Test
+    public void throwExceptionNoEventsFromOfficeFound() {
+        eventService = mock(EventService.class);
+        when(eventService.getAllEventsFromTicketOffice(any(Predicate.class), anyString(), anyInt(), anyInt())).thenReturn(null);
+    }
 }

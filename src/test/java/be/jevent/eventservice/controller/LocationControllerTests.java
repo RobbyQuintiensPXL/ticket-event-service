@@ -81,9 +81,9 @@ public class LocationControllerTests {
         List<String> cityList = new LinkedList<>();
         cityList.add(location.getCity());
 
-        when(locationService.getAllLocationCities()).thenReturn(cityList);
+        when(locationService.getAllLocationCities(true)).thenReturn(cityList);
 
-        ResponseEntity<List<String>> responseEntity = locationController.getAllCities();
+        ResponseEntity<List<String>> responseEntity = locationController.getAllCities(true);
 
         assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
         assertThat(Objects.requireNonNull(responseEntity.getBody()).get(0)).isEqualTo(location.getCity());

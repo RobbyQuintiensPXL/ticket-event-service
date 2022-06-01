@@ -132,9 +132,4 @@ public class EventControllerTests {
         assertThat(Objects.requireNonNull(responseEntity.getBody()).get(0)).isEqualTo(event.getEventType().getType());
 
     }
-
-
-//    MockHttpServletRequest request = new MockHttpServletRequest();
-//    RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-
 }

@@ -22,7 +22,6 @@ public class EventDTO {
     private final String shortDescription;
     private final double price;
     private int ticketsLeft;
-    @JsonIgnore
     private final boolean accepted;
     private LocationDTO getLocationDTO(Location location) {
         return new LocationDTO(location);

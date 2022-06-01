@@ -1,6 +1,7 @@
 package be.jevent.eventservice.service;
 
 import be.jevent.eventservice.createresource.CreateLocationResource;
+import be.jevent.eventservice.dto.EventDTO;
 import be.jevent.eventservice.dto.LocationDTO;
 import be.jevent.eventservice.exception.LocationException;
 import be.jevent.eventservice.model.Event;
@@ -39,6 +40,14 @@ public class LocationService {
             throw new LocationException("No locations found");
         }
         return locationDTOList;
+    }
+
+    public List<String> getAllLocationCities(boolean accepted) {
+        List<String> cityList = eventRepository.findAll().stream().map(EventDTO::new).filter(e -> e.isAccepted() == accepted).map(EventDTO::getLocation).map(LocationDTO::getCity).distinct().collect(Collectors.toList());
+        if (cityList.isEmpty()) {
+            throw new LocationException("No cities found");
+        }
+        return cityList;
     }
 
     public List<String> getAllLocationCities() {

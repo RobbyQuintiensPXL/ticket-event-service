@@ -47,18 +47,21 @@ public class EventService {
 
     public Page<EventDTO> getAllEventsImpl(int page, int size) {
         Pageable paging = PageRequest.of(page, size);
-        List<EventDTO> list = eventRepository.findAll().stream().map(EventDTO::new).collect(Collectors.toList());
+        List<EventDTO> list = eventRepository.findAll().stream().map(EventDTO::new).filter(EventDTO::isAccepted).collect(Collectors.toList());
+        if (list.isEmpty()) {
+            throw new EventException("No events found");
+        }
         return new PageImpl<>(list, paging, list.size());
     }
 
     public Page<EventDTO> findByTypeCity(Predicate predicate, int page, int size) {
         Pageable paging = PageRequest.of(page, size);
         BooleanBuilder builder = new BooleanBuilder();
-        Page<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate), paging).map(EventDTO::new);
+        List<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate), paging).stream().map(EventDTO::new).filter(EventDTO::isAccepted).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
         }
-        return eventDTOList;
+        return new PageImpl<>(eventDTOList, paging, eventDTOList.size());
     }
 
     public Page<EventDTO> getAllEventsFromTicketOffice(Predicate predicate, String ticketOffice, int page, int size) {
@@ -73,6 +76,17 @@ public class EventService {
         return new PageImpl<>(eventDTOList, paging, eventDTOList.size());
     }
 
+    public Page<EventDTO> getNewEventsForAdmin(Predicate predicate, int page, int size){
+        Pageable paging = PageRequest.of(page, size);
+        BooleanBuilder builder = new BooleanBuilder();
+
+        List<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate), paging).stream().map(EventDTO::new).filter(e -> !e.isAccepted()).collect(Collectors.toList());
+        if (eventDTOList.isEmpty()) {
+            throw new EventException("No events found");
+        }
+        return new PageImpl<>(eventDTOList, paging, eventDTOList.size());
+    }
+
     public EventDTO getEventById(Long id) {
         Optional<EventDTO> eventDTO = eventRepository.findById(id).map(EventDTO::new);
         if (eventDTO.isEmpty()) {
@@ -80,6 +94,15 @@ public class EventService {
         }
         eventDTO.get().setTicketsLeft(eventDTO.get().getTicketsLeft() - retrieveTicketsSold(id));
         return eventDTO.get();
+    }
+
+    public void approveEvent(Long id){
+        Optional<Event> event = eventRepository.findById(id);
+        if (event.isEmpty()) {
+            throw new EventException("Event not found");
+        }
+        event.get().setAccepted(true);
+        eventRepository.save(event.get());
     }
 
     public void createEvent(CreateEventResource eventResource,
@@ -116,12 +139,9 @@ public class EventService {
         return "event deleted";
     }
 
-    public void updateEvent(Event event) {
-        eventRepository.save(event);
-    }
-
     public int retrieveTicketsSold(Long eventId) {
         return ticketFeignClient.getTicketsSold(eventId);
     }
+
 
 }
