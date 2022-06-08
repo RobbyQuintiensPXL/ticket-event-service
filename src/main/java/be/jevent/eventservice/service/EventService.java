@@ -121,7 +121,6 @@ public class EventService {
         event.setEventDate(eventResource.getEventDate());
         event.setEventTime(eventResource.getEventTime());
         event.setLocation(location);
-        event.setTicketsLeft(eventResource.getTicketsLeft());
         event.setPrice(eventResource.getPrice());
         event.setBanner(banner.getOriginalFilename());
         event.setThumbnail(thumb.getOriginalFilename());
@@ -142,6 +141,4 @@ public class EventService {
     public int retrieveTicketsSold(Long eventId) {
         return ticketFeignClient.getTicketsSold(eventId);
     }
-
-
 }
