@@ -22,12 +22,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class EventService {
+
+    private final static LocalDate LOCAL_DATE = LocalDate.now();
 
     private final TicketFeignClient ticketFeignClient;
     private final EventRepository eventRepository;
@@ -47,7 +51,7 @@ public class EventService {
 
     public Page<EventDTO> getAllEventsImpl(int page, int size) {
         Pageable paging = PageRequest.of(page, size);
-        List<EventDTO> list = eventRepository.findAll().stream().map(EventDTO::new).filter(EventDTO::isAccepted).collect(Collectors.toList());
+        List<EventDTO> list = eventRepository.findAll().stream().map(EventDTO::new).filter(EventDTO::isAccepted).filter(e -> e.getEventDate().isAfter(LOCAL_DATE)).collect(Collectors.toList());
         if (list.isEmpty()) {
             throw new EventException("No events found");
         }
@@ -57,7 +61,10 @@ public class EventService {
     public Page<EventDTO> findByTypeCity(Predicate predicate, int page, int size) {
         Pageable paging = PageRequest.of(page, size);
         BooleanBuilder builder = new BooleanBuilder();
-        List<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate), paging).stream().map(EventDTO::new).filter(EventDTO::isAccepted).collect(Collectors.toList());
+        List<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate), paging).stream()
+                .map(EventDTO::new).filter(EventDTO::isAccepted)
+                .filter(e -> e.getEventDate().isAfter(LOCAL_DATE))
+                .sorted(Comparator.comparing(EventDTO::getEventDate)).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
         }
@@ -133,8 +140,8 @@ public class EventService {
     }
 
     @Transactional
-    public String deleteEvent(Long id, String ticketOffice) {
-        eventRepository.deleteByIdAndTicketOffice(id, ticketOffice);
+    public String deleteEvent(Long id) {
+        eventRepository.deleteById(id);
         return "event deleted";
     }
 

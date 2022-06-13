@@ -15,7 +15,6 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "locations")
 public class LocationController {
 
     @Autowired
@@ -26,7 +25,7 @@ public class LocationController {
         return new ResponseEntity<>(locationService.getAllLocations(), HttpStatus.OK);
     }
 
-    @GetMapping("/city")
+    @GetMapping("/locations/city")
     public ResponseEntity<List<String>> getAllCities(@RequestParam(required = false) Boolean accepted) {
         if (accepted == null){
             return new ResponseEntity<>(locationService.getAllLocationCities(), HttpStatus.OK);
@@ -34,7 +33,7 @@ public class LocationController {
         return new ResponseEntity<>(locationService.getAllLocationCities(accepted), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/add_location")
+    @PostMapping(value = "/locations/add_location")
     public ResponseEntity<Void> createLocation(@RequestHeader HttpHeaders token,
                                                @RequestBody @Valid CreateLocationResource locationResource) {
         UserNameFilter filter = new UserNameFilter();
@@ -43,12 +42,12 @@ public class LocationController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "{id}")
+    @GetMapping(value = "locations/{id}")
     public ResponseEntity<Location> getLocationById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(locationService.getLocationById(id), HttpStatus.OK);
     }
 
-    @GetMapping(value = "office")
+    @GetMapping(value = "office/locations")
     public ResponseEntity<List<LocationDTO>> getLocationsByTicketOffice(@RequestHeader HttpHeaders token) {
         UserNameFilter filter = new UserNameFilter();
         String ticketOffice = filter.getTicketOffice(token);

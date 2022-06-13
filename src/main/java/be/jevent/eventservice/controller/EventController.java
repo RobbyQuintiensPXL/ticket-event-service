@@ -11,11 +11,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "events")
 public class EventController {
+
+    private final static LocalDate LOCAL_DATE = LocalDate.now();
 
     private final EventService eventService;
     private final EventTypeService eventTypeService;

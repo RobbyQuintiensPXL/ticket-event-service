@@ -45,12 +45,6 @@ public class EventOfficeController {
         return new ResponseEntity<>(eventService.getAllEventsFromTicketOffice(predicate, getTicketOffice(token), page, size), HttpStatus.OK);
     }
 
-    @DeleteMapping("/event/{id}")
-    public ResponseEntity<String> deleteEvent(@PathVariable("id") Long id,
-                                              @RequestHeader HttpHeaders token) {
-        return new ResponseEntity<>(eventService.deleteEvent(id, getTicketOffice(token)), HttpStatus.OK);
-    }
-
     private String getTicketOffice(HttpHeaders token) {
         UserNameFilter filter = new UserNameFilter();
         return filter.getTicketOffice(token);
