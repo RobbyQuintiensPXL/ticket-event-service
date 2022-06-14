@@ -10,12 +10,15 @@ import be.jevent.eventservice.repository.EventRepository;
 import be.jevent.eventservice.repository.LocationRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class LocationService {
+
+    private final static LocalDate LOCAL_DATE = LocalDate.now();
 
     private final LocationRepository locationRepository;
     private final EventRepository eventRepository;
@@ -43,7 +46,7 @@ public class LocationService {
     }
 
     public List<String> getAllLocationCities(boolean accepted) {
-        List<String> cityList = eventRepository.findAll().stream().map(EventDTO::new).filter(e -> e.isAccepted() == accepted).map(EventDTO::getLocation).map(LocationDTO::getCity).distinct().collect(Collectors.toList());
+        List<String> cityList = eventRepository.findAll().stream().map(EventDTO::new).filter(e -> e.isAccepted() == accepted).filter(e -> e.getEventDate().isAfter(LOCAL_DATE)).map(EventDTO::getLocation).map(LocationDTO::getCity).distinct().collect(Collectors.toList());
         if (cityList.isEmpty()) {
             throw new LocationException("No cities found");
         }
