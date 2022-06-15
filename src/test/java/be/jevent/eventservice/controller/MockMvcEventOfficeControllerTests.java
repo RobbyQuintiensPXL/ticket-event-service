@@ -31,7 +31,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(EventAdminController.class)
+@WebMvcTest(EventOfficeController.class)
 public class MockMvcEventOfficeControllerTests {
 
     @Autowired
@@ -76,21 +76,21 @@ public class MockMvcEventOfficeControllerTests {
         event.setLocation(location);
     }
 
-//    @Test
-//    public void getAllEventsTest() throws Exception {
-//        init();
-//        List<EventDTO> eventDTOS = new LinkedList<>();
-//        eventDTOS.add(new EventDTO(event));
-//        Page<EventDTO> events = new PageImpl<>(eventDTOS);
-//        when(eventService.getAllEventsFromTicketOffice(any(Predicate.class), anyString(), anyInt(), anyInt()))
-//                .thenReturn(events);
-//
-//        mockMvc
-//                .perform(MockMvcRequestBuilders.get("/office/events")
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(MockMvcResultMatchers.status().isOk());
-//    }
-//
+    @Test
+    public void getAllEventsTest() throws Exception {
+        init();
+        List<EventDTO> eventDTOS = new LinkedList<>();
+        eventDTOS.add(new EventDTO(event));
+        Page<EventDTO> events = new PageImpl<>(eventDTOS);
+        when(eventService.getAllEventsFromTicketOffice(any(Predicate.class), anyString(), anyInt(), anyInt()))
+                .thenReturn(events);
+
+        mockMvc
+                .perform(MockMvcRequestBuilders.get("/office/events")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
 //    @Test
 //    public void createEventTest() throws Exception {
 //        init();
