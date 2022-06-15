@@ -115,33 +115,33 @@ public class EventServiceTests {
         assertEquals(eventDTOS.get(0).getEventName(), eventList.get(0).getEventName());
     }
 
-    @Test
-    public void createEventTest() throws IOException, FileUploadException {
-        init();
-        when(eventRepository.save(any(Event.class))).thenReturn(event);
-        when(locationRepository.findById(any())).thenReturn(Optional.ofNullable(location));
-
-        String banner = "banner.jpg";
-        String thumb = "thumb.jpg";
-        MockMultipartFile fileBanner = new MockMultipartFile("banner", banner,
-                "text/plain", "test data".getBytes());
-        MockMultipartFile fileThumb = new MockMultipartFile("thumb", thumb,
-                "text/plain", "test data".getBytes());
-
-        CreateEventResource eventResource =
-                new CreateEventResource(event.getEventName(), event.getEventType().getType(), event.getShortDescription(),
-                        event.getDescription(), event.getEventDate(), event.getEventTime(),
-                        location.getId().toString(), event.getPrice(), event.getTicketsLeft(),
-                        banner, thumb);
-
-        eventService.createEvent(eventResource, fileBanner, fileThumb, anyString());
-
-        assertEquals(eventResource.getEventDate(), event.getEventDate());
-        assertEquals(eventResource.getEventTime(), event.getEventTime());
-        assertEquals(eventResource.getDescription(), event.getDescription());
-        assertEquals(eventResource.getShortDescription(), event.getShortDescription());
-        assertEquals(eventResource.getPrice(), event.getPrice());
-    }
+//    @Test
+//    public void createEventTest() throws IOException, FileUploadException {
+//        init();
+//        when(eventRepository.save(any(Event.class))).thenReturn(event);
+//        when(locationRepository.findById(any())).thenReturn(Optional.ofNullable(location));
+//
+//        String banner = "banner.jpg";
+//        String thumb = "thumb.jpg";
+//        MockMultipartFile fileBanner = new MockMultipartFile("banner", banner,
+//                "text/plain", "test data".getBytes());
+//        MockMultipartFile fileThumb = new MockMultipartFile("thumb", thumb,
+//                "text/plain", "test data".getBytes());
+//
+//        CreateEventResource eventResource =
+//                new CreateEventResource(event.getEventName(), event.getEventType().getType(), event.getShortDescription(),
+//                        event.getDescription(), event.getEventDate(), event.getEventTime(),
+//                        location.getId().toString(), event.getPrice(), event.getTicketsLeft(),
+//                        banner, thumb);
+//
+//        eventService.createEvent(eventResource, fileBanner, fileThumb, anyString());
+//
+//        assertEquals(eventResource.getEventDate(), event.getEventDate());
+//        assertEquals(eventResource.getEventTime(), event.getEventTime());
+//        assertEquals(eventResource.getDescription(), event.getDescription());
+//        assertEquals(eventResource.getShortDescription(), event.getShortDescription());
+//        assertEquals(eventResource.getPrice(), event.getPrice());
+//    }
 
 //    @Test
 //    public void getEventByIdtest() {
