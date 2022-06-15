@@ -23,22 +23,24 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(SpringRunner.class)
-public class EventControllerTests {
+public class EventAdminControllerTests {
 
     Predicate predicate;
     BooleanBuilder builder;
 
     @InjectMocks
-    EventController eventController;
+    EventAdminController eventAdminController;
 
     @Mock
     EventService eventService;
@@ -73,7 +75,6 @@ public class EventControllerTests {
         event.setEventTime(LocalTime.now());
         event.setTicketsLeft(200);
         event.setPrice(100);
-        event.setAccepted(true);
         event.setLocation(location);
         event.setTicketOffice("Organisation");
         event.setBanner("banner");
@@ -89,7 +90,6 @@ public class EventControllerTests {
         event2.setEventTime(LocalTime.now());
         event2.setTicketsLeft(100);
         event2.setPrice(300);
-        event2.setAccepted(true);
         event2.setLocation(location2);
         event2.setTicketOffice("Organisation2");
         event2.setBanner("banner2");
@@ -106,47 +106,27 @@ public class EventControllerTests {
     public void getAllEventsTest() {
         init();
         Page<EventDTO> events = new PageImpl<>(eventList).map(EventDTO::new);
-        when(eventService.getAllEventsImpl(pageable.getPageNumber(), pageable.getPageSize())).thenReturn(events);
+        when(eventService.getNewEventsForAdmin(predicate, pageable.getPageNumber(), pageable.getPageSize())).thenReturn(events);
 
-        ResponseEntity<Page<EventDTO>> responseEntity = eventController.getAllEvents(pageable.getPageNumber(), pageable.getPageSize());
+        ResponseEntity<Page<EventDTO>> responseEntity = eventAdminController.getAllEvents(pageable.getPageNumber(), pageable.getPageSize(), predicate);
 
         assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
     }
 
     @Test
-    public void getEventByIdTest() {
+    public void approveEventTest() {
         init();
-        EventDTO eventDTO = Optional.of(event).stream().map(EventDTO::new).findAny().get();
-        when(eventService.getEventById(anyLong())).thenReturn(eventDTO);
+        ResponseEntity<Void> responseEntity = eventAdminController.approveEvent(event.getId());
 
-        ResponseEntity<EventDTO> responseEntity = eventController.getEventById(event.getId());
-
-        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
-        assertThat(Objects.requireNonNull(responseEntity.getBody()).getDescription()).isEqualTo(event.getDescription());
-        assertThat(Objects.requireNonNull(responseEntity.getBody()).getEventName()).isEqualTo(eventDTO.getEventName());
+        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(201);
     }
 
     @Test
-    public void getAllEventTypesTest(){
+    public void deleteEventTest() {
         init();
-        List<String> typeList = new LinkedList<>();
-        typeList.add(event.getEventType().getType());
 
-        when(eventTypeService.getAllEventTypes()).thenReturn(typeList);
-
-        ResponseEntity<List<String>> responseEntity = eventController.getAllEventTypes();
-
-        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
-        assertThat(Objects.requireNonNull(responseEntity.getBody()).get(0)).isEqualTo(event.getEventType().getType());
-    }
-
-    @Test
-    public void getEventsByTypeAndCityTest(){
-        init();
-        Page<EventDTO> events = new PageImpl<>(eventList).map(EventDTO::new);
-        when(eventService.findByTypeCity(predicate, pageable.getPageNumber(), pageable.getPageSize())).thenReturn(events);
-
-        ResponseEntity<Page<EventDTO>> responseEntity = eventController.getEventsByTypeAndCity(pageable.getPageNumber(), pageable.getPageSize(), predicate);
+        when(eventService.deleteEvent(anyLong())).thenReturn(anyString());
+        ResponseEntity<String> responseEntity = eventAdminController.deleteEvent(event.getId());
 
         assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
     }

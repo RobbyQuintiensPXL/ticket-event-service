@@ -76,7 +76,7 @@ public class LocationControllerTests {
     }
 
     @Test
-    public void getAllCitiesTest(){
+    public void getAllCitiesTest() {
         init();
         List<String> cityList = new LinkedList<>();
         cityList.add(location.getCity());
