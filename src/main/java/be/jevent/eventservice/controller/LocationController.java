@@ -20,7 +20,7 @@ public class LocationController {
     @Autowired
     private LocationService locationService;
 
-    @GetMapping
+    @GetMapping("/alllocations")
     public ResponseEntity<List<LocationDTO>> getAllLocations() {
         return new ResponseEntity<>(locationService.getAllLocations(), HttpStatus.OK);
     }

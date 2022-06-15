@@ -83,7 +83,7 @@ public class EventService {
         return new PageImpl<>(eventDTOList, paging, eventDTOList.size());
     }
 
-    public Page<EventDTO> getNewEventsForAdmin(Predicate predicate, int page, int size){
+    public Page<EventDTO> getNewEventsForAdmin(Predicate predicate, int page, int size) {
         Pageable paging = PageRequest.of(page, size);
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -103,7 +103,7 @@ public class EventService {
         return eventDTO.get();
     }
 
-    public void approveEvent(Long id){
+    public void approveEvent(Long id) {
         Optional<Event> event = eventRepository.findById(id);
         if (event.isEmpty()) {
             throw new EventException("Event not found");
