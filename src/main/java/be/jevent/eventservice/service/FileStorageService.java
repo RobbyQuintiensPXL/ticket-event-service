@@ -32,7 +32,7 @@ public class FileStorageService {
             Path resolve = root.resolve(Objects.requireNonNull(file.getOriginalFilename()));
             if (resolve.toFile()
                     .exists()) {
-                throw new FileUploadException("File already exists: " + file.getOriginalFilename());
+                Files.deleteIfExists(resolve);
             }
             Files.copy(file.getInputStream(), resolve);
         } catch (Exception e) {

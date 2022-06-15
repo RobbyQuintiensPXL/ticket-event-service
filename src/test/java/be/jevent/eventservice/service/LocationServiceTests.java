@@ -67,24 +67,43 @@ public class LocationServiceTests {
         assertEquals(location.getAddress(), locationDTOList.get(0).getAddress());
     }
 
-/*    @Test
+    @Test
     public void getAllLocationCitiesTest(){
         init();
 
         Event event = new Event();
         event.setLocation(location);
+        event.setAccepted(false);
 
         List<Event> eventList = new LinkedList<>();
         eventList.add(event);
 
-        when(eventRepository.findAll())
-                .thenReturn(eventList);
+        when(eventRepository.findAll()).thenReturn(eventList);
 
-        List<String> listOfCities = locationService.getAllLocationCities(true);
+        List<String> listOfCities = locationService.getAllLocationCities();
 
         assertEquals(eventList.size(), listOfCities.size());
         assertEquals(eventList.get(0).getLocation().getCity(), listOfCities.get(0));
-    }*/
+    }
+
+    @Test
+    public void getAllLocationCitiesAcceptedTest(){
+        init();
+
+        Event event = new Event();
+        event.setLocation(location);
+        event.setAccepted(true);
+
+        List<Event> eventList = new LinkedList<>();
+        eventList.add(event);
+
+        when(eventRepository.findAll()).thenReturn(eventList);
+
+        List<String> listOfCities = locationService.getAllLocationCities();
+
+        assertEquals(eventList.size(), listOfCities.size());
+        assertEquals(eventList.get(0).getLocation().getCity(), listOfCities.get(0));
+    }
 
     @Test
     public void getLocationById(){
