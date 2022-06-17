@@ -33,7 +33,7 @@ public class LocationController {
         return new ResponseEntity<>(locationService.getAllLocationCities(accepted), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/locations/add_location")
+    @PostMapping(value = "/office/add_location")
     public ResponseEntity<Void> createLocation(@RequestHeader HttpHeaders token,
                                                @RequestBody @Valid CreateLocationResource locationResource) {
         UserNameFilter filter = new UserNameFilter();
@@ -47,7 +47,7 @@ public class LocationController {
         return new ResponseEntity<>(locationService.getLocationById(id), HttpStatus.OK);
     }
 
-    @GetMapping(value = "office/locations")
+    @GetMapping(value = "/office/locations")
     public ResponseEntity<List<LocationDTO>> getLocationsByTicketOffice(@RequestHeader HttpHeaders token) {
         UserNameFilter filter = new UserNameFilter();
         String ticketOffice = filter.getTicketOffice(token);

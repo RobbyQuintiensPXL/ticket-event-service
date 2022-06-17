@@ -128,6 +128,6 @@ public class EventAdminControllerTests {
         when(eventService.deleteEvent(anyLong())).thenReturn(anyString());
         ResponseEntity<String> responseEntity = eventAdminController.deleteEvent(event.getId());
 
-        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
+        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(201);
     }
 }

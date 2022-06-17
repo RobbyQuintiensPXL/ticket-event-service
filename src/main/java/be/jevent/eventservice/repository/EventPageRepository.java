@@ -2,8 +2,11 @@ package be.jevent.eventservice.repository;
 
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.QEvent;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
@@ -20,4 +23,7 @@ public interface EventPageRepository extends PagingAndSortingRepository<Event, L
     default void customize(QuerydslBindings bindings, QEvent root) {
         bindings.bind(String.class).first((SingleValueBinding<StringPath, String>) StringExpression::eq);
     }
+
+    Page<Event> findAllByAccepted(boolean accepted, Pageable pageable, Predicate predicate);
 }
+

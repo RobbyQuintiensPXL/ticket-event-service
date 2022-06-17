@@ -7,6 +7,7 @@ import be.jevent.eventservice.filter.EventPredicates;
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.model.Location;
+import be.jevent.eventservice.model.QEvent;
 import be.jevent.eventservice.repository.EventPageRepository;
 import be.jevent.eventservice.repository.EventRepository;
 import be.jevent.eventservice.service.client.TicketFeignClient;
@@ -86,8 +87,9 @@ public class EventService {
     public Page<EventDTO> getNewEventsForAdmin(Predicate predicate, int page, int size) {
         Pageable paging = PageRequest.of(page, size);
         BooleanBuilder builder = new BooleanBuilder();
+        builder.and(QEvent.event.accepted.eq(false));
 
-        List<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate), paging).stream().map(EventDTO::new).filter(e -> !e.isAccepted()).collect(Collectors.toList());
+        List<EventDTO> eventDTOList = eventPageRepository.findAll(builder, paging).stream().map(EventDTO::new).filter(e -> !e.isAccepted()).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
         }
@@ -132,6 +134,7 @@ public class EventService {
         event.setBanner(banner.getOriginalFilename());
         event.setThumbnail(thumb.getOriginalFilename());
         event.setTicketOffice(ticketOffice);
+        event.setTicketsLeft(eventResource.getTicketsLeft());
 
         storageService.save(thumb);
         storageService.save(banner);
