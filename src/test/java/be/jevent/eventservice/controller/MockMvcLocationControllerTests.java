@@ -99,7 +99,7 @@ public class MockMvcLocationControllerTests {
         locationDTOS.add(new LocationDTO(location));
 
         mockMvc
-                .perform(MockMvcRequestBuilders.post("/locations/add_location")
+                .perform(MockMvcRequestBuilders.post("/office/add_location")
                         .content(asJsonString(new CreateLocationResource("Building", 3500,
                                 "City", "Address", "Country")))
                         .contentType(MediaType.APPLICATION_JSON)

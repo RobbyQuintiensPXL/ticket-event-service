@@ -52,7 +52,7 @@ public class EventService {
 
     public Page<EventDTO> getAllEventsImpl(int page, int size) {
         Pageable paging = PageRequest.of(page, size);
-        List<EventDTO> list = eventRepository.findAll().stream().map(EventDTO::new).filter(EventDTO::isAccepted).filter(e -> e.getEventDate().isAfter(LOCAL_DATE)).collect(Collectors.toList());
+        List<EventDTO> list = eventRepository.findAllByEventDateAfter(LOCAL_DATE).stream().map(EventDTO::new).filter(EventDTO::isAccepted).collect(Collectors.toList());
         if (list.isEmpty()) {
             throw new EventException("No events found");
         }
@@ -62,9 +62,10 @@ public class EventService {
     public Page<EventDTO> findByTypeCity(Predicate predicate, int page, int size) {
         Pageable paging = PageRequest.of(page, size);
         BooleanBuilder builder = new BooleanBuilder();
+        builder.and(QEvent.event.eventDate.after(LOCAL_DATE));
+
         List<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate), paging).stream()
                 .map(EventDTO::new).filter(EventDTO::isAccepted)
-                .filter(e -> e.getEventDate().isAfter(LOCAL_DATE))
                 .sorted(Comparator.comparing(EventDTO::getEventDate)).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
@@ -89,7 +90,7 @@ public class EventService {
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(QEvent.event.accepted.eq(false));
 
-        List<EventDTO> eventDTOList = eventPageRepository.findAll(builder, paging).stream().map(EventDTO::new).filter(e -> !e.isAccepted()).collect(Collectors.toList());
+        List<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate), paging).stream().map(EventDTO::new).filter(e -> !e.isAccepted()).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
         }

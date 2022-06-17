@@ -14,6 +14,9 @@ import org.springframework.data.querydsl.binding.SingleValueBinding;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Repository
 public interface EventPageRepository extends PagingAndSortingRepository<Event, Long>,
         QuerydslPredicateExecutor<Event>,
@@ -24,6 +27,5 @@ public interface EventPageRepository extends PagingAndSortingRepository<Event, L
         bindings.bind(String.class).first((SingleValueBinding<StringPath, String>) StringExpression::eq);
     }
 
-    Page<Event> findAllByAccepted(boolean accepted, Pageable pageable, Predicate predicate);
 }
 
