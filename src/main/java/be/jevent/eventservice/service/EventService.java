@@ -62,10 +62,10 @@ public class EventService {
     public Page<EventDTO> findByTypeCity(Predicate predicate, int page, int size) {
         Pageable paging = PageRequest.of(page, size);
         BooleanBuilder builder = new BooleanBuilder();
-        builder.and(QEvent.event.eventDate.after(LOCAL_DATE));
+        builder.and(QEvent.event.eventDate.after(LOCAL_DATE)).and(QEvent.event.accepted.eq(true));
 
         List<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate), paging).stream()
-                .map(EventDTO::new).filter(EventDTO::isAccepted)
+                .map(EventDTO::new)
                 .sorted(Comparator.comparing(EventDTO::getEventDate)).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
@@ -76,9 +76,9 @@ public class EventService {
     public Page<EventDTO> getAllEventsFromTicketOffice(Predicate predicate, String ticketOffice, int page, int size) {
         Pageable paging = PageRequest.of(page, size);
         BooleanBuilder builder = new BooleanBuilder();
-        Predicate predicate1 = EventPredicates.eventsByTicketOffice(ticketOffice);
+        builder.and(QEvent.event.ticketOffice.eq(ticketOffice));
 
-        List<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate).and(predicate1), paging).stream().map(EventDTO::new).collect(Collectors.toList());
+        List<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate), paging).stream().map(EventDTO::new).sorted(Comparator.comparing(EventDTO::getEventDate)).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
         }
@@ -90,7 +90,8 @@ public class EventService {
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(QEvent.event.accepted.eq(false));
 
-        List<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate), paging).stream().map(EventDTO::new).filter(e -> !e.isAccepted()).collect(Collectors.toList());
+        List<EventDTO> eventDTOList = eventPageRepository.findAll(builder.and(predicate), paging).stream()
+                .map(EventDTO::new).collect(Collectors.toList());
         if (eventDTOList.isEmpty()) {
             throw new EventException("No events found");
         }
