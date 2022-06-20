@@ -3,7 +3,6 @@ package be.jevent.eventservice.dto;
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.Location;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -21,14 +20,10 @@ public class EventDTO {
     private final String description;
     private final String shortDescription;
     private final double price;
-    private int ticketsLeft;
     private final boolean accepted;
-    private LocationDTO getLocationDTO(Location location) {
-        return new LocationDTO(location);
-    }
     private final String thumbnail;
     private final String banner;
-
+    private int ticketsLeft;
     public EventDTO(Event event) {
         this.id = event.getId();
         this.eventName = event.getEventName();
@@ -43,6 +38,10 @@ public class EventDTO {
         this.ticketsLeft = event.getTicketsLeft();
         this.thumbnail = event.getThumbnail();
         this.banner = event.getBanner();
+    }
+
+    private LocationDTO getLocationDTO(Location location) {
+        return new LocationDTO(location);
     }
 
     public Long getId() {

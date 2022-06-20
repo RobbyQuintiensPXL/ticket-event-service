@@ -216,7 +216,6 @@ public class EventServiceTests {
         init();
         int ticket = 2;
         when(ticketFeignClient.getTicketsSold(anyLong())).thenReturn(ticket);
-
     }
 
     @Test(expected = EventException.class)

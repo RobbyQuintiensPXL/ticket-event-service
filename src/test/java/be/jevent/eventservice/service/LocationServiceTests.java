@@ -139,6 +139,7 @@ public class LocationServiceTests {
                         location.getCity(), location.getAddress(), location.getCountry());
 
         locationService.createLocation(locationResource, anyString());
+        assertEquals(location.getCity(), locationResource.getCity());
     }
 
     @Test

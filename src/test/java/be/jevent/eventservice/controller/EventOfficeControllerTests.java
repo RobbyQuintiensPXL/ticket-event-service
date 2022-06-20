@@ -112,10 +112,4 @@ public class EventOfficeControllerTests {
 //
 //        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
 //    }
-
-    @Test
-    public void createEventTest() {
-
-    }
-
 }

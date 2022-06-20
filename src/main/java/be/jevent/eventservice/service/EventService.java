@@ -3,7 +3,6 @@ package be.jevent.eventservice.service;
 import be.jevent.eventservice.createresource.CreateEventResource;
 import be.jevent.eventservice.dto.EventDTO;
 import be.jevent.eventservice.exception.EventException;
-import be.jevent.eventservice.filter.EventPredicates;
 import be.jevent.eventservice.model.Event;
 import be.jevent.eventservice.model.EventType;
 import be.jevent.eventservice.model.Location;
